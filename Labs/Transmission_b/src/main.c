@@ -200,7 +200,6 @@ void displayRPM() {
     MOTOR_DIR_PORT->PSOR = (1 << MOTOR_DIR_PIN);
 
     /* Duty cycle percent 0-0x8000 -> 0-100%*/
-    // TODO: Transform from RPM to duty cycle
     motorDutyCycle = rpm * RPM_MAX_DUTY_CYCLE / MAX_RPM;
     motorDutyCycle = motorDutyCycle * (-1) + RPM_MAX_DUTY_CYCLE;
 
@@ -284,6 +283,7 @@ void updateGear() {
         rpm = rpm * rpmChangeFactor;
     // TODO: Gear change logic.
         // Ensure RPM is within the idle and max RPM limits
+    }
 }
 
 /* @brief: Calculate the values to be sent to the Servo motor in order to indicate
