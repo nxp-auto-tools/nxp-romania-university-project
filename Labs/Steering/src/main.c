@@ -30,7 +30,7 @@
 #define PDLY_TIMEOUT   10000UL
 
 #define MIN_DUTY_CYCLE 300
-#define MIN_DUTY_CYCLE 1800
+#define MAX_DUTY_CYCLE 1800
 
 /* ******** VARIABLES ***************** */
 volatile int exit_code = 0;
@@ -231,10 +231,10 @@ int main(void) {
 		 * TODO 3: Update servo motor with the extracted duty cycle
 		 * 	- see FTM_DRV_UpdatePwmChannel
 		 */
-
+		OSIF_TimeDelay(10);
 		/*
 		 * TODO 4: Checks if the conversion is ready,
-		 * processes the raw value and trigger new conversion
+		 * processes the raw value in volts and trigger new conversion
 		 * 	- see PDB_DRV_SoftTriggerCmd
 		 */
 
