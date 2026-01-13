@@ -1,0 +1,51 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36" version="28.1.0">
+  <diagram name="Page-1" id="F_Ik5BhITSFfoQTPE-Gp">
+    <mxGraphModel dx="1426" dy="897" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="YTdB0B9LVyYEYeg4_Ikg-11" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;Block diagram&lt;/font&gt;" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;recursiveResize=0;container=1;collapsible=0;width=160;fillColor=default;shadow=0;gradientColor=none;labelBackgroundColor=#FFFFFF;swimlaneFillColor=default;" vertex="1" parent="1">
+          <mxGeometry x="60" y="230" width="640" height="390" as="geometry" />
+        </mxCell>
+        <mxCell id="YTdB0B9LVyYEYeg4_Ikg-1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#34ADFF;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="120" y="310" width="170" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="YTdB0B9LVyYEYeg4_Ikg-2" value="" style="endArrow=classic;html=1;rounded=0;entryX=1.006;entryY=0.3;entryDx=0;entryDy=0;entryPerimeter=0;fillColor=#01FFF6;strokeColor=#1EAAAA;exitX=-0.018;exitY=0.304;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="YTdB0B9LVyYEYeg4_Ikg-4" target="YTdB0B9LVyYEYeg4_Ikg-1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="440" y="360" as="sourcePoint" />
+            <mxPoint x="530" y="340" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YTdB0B9LVyYEYeg4_Ikg-3" value="" style="endArrow=classic;html=1;rounded=0;strokeColor=#FF9900;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="290" y="490" as="sourcePoint" />
+            <mxPoint x="439" y="490" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YTdB0B9LVyYEYeg4_Ikg-4" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=light-dark(#ffae52, #7c5b37);strokeColor=#36393d;" vertex="1" parent="1">
+          <mxGeometry x="440" y="310" width="170" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="YTdB0B9LVyYEYeg4_Ikg-5" value="&lt;font style=&quot;font-size: 20px; color: rgb(255, 255, 255);&quot;&gt;Dev Board K144&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;html=1;fontSize=24;fontStyle=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
+          <mxGeometry x="95" y="320" width="220" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="YTdB0B9LVyYEYeg4_Ikg-6" value="&lt;font style=&quot;font-weight: normal; font-size: 13px;&quot;&gt;Voltage&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;html=1;fontSize=24;fontStyle=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
+          <mxGeometry x="315" y="340" width="105" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YTdB0B9LVyYEYeg4_Ikg-7" value="&lt;span style=&quot;font-weight: normal;&quot;&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;PWM&lt;/font&gt;&lt;/span&gt;" style="text;strokeColor=none;fillColor=none;html=1;fontSize=24;fontStyle=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
+          <mxGeometry x="311.25" y="450" width="112.5" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="YTdB0B9LVyYEYeg4_Ikg-8" value="&lt;font style=&quot;color: rgb(255, 251, 248); font-size: 20px;&quot;&gt;PCB&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;html=1;fontSize=24;fontStyle=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
+          <mxGeometry x="425" y="320" width="100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="YTdB0B9LVyYEYeg4_Ikg-9" value="&lt;font style=&quot;font-size: 17px;&quot;&gt;Potentiometer&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#fde0c4, #5e3206);fillStyle=solid;strokeColor=#36393d;" vertex="1" parent="1">
+          <mxGeometry x="450" y="360" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YTdB0B9LVyYEYeg4_Ikg-10" value="&lt;font style=&quot;font-size: 17px;&quot;&gt;Servomotor&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=light-dark(#FDE0C4,#704200);" vertex="1" parent="1">
+          <mxGeometry x="450" y="460" width="150" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

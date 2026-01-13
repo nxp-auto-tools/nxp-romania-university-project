@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<configuration name="S32K144" xsi:schemaLocation="http://mcuxpresso.nxp.com/XSD/mex_configuration_11 http://mcuxpresso.nxp.com/XSD/mex_configuration_11.xsd" uuid="78d5749b-a417-48e3-96f2-7e483e51b4a7" version="11" xmlns="http://mcuxpresso.nxp.com/XSD/mex_configuration_11" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <common>
+      <processor>S32K144</processor>
+      <package>S32K144_LQFP100</package>
+      <mcu_data>s32sdk_s32k1xx_rtm_401</mcu_data>
+      <cores selected="core0">
+         <core name="Cortex-M4" id="core0" description=""/>
+      </cores>
+      <description>Configuration imported from lab8_s32k144</description>
+   </common>
+   <preferences>
+      <validate_boot_init_only>true</validate_boot_init_only>
+      <generate_extended_information>false</generate_extended_information>
+      <generate_code_modified_registers_only>false</generate_code_modified_registers_only>
+      <update_include_paths>true</update_include_paths>
+      <generate_registers_defines>false</generate_registers_defines>
+   </preferences>
+   <tools>
+      <pins name="Pins" version="11.0" enabled="true" update_project_code="false">
+         <generated_project_files>
+            <file path="board/pin_mux.c" update_enabled="true"/>
+            <file path="board/pin_mux.h" update_enabled="true"/>
+         </generated_project_files>
+         <pins_profile>
+            <processor_version>0.0.0</processor_version>
+            <power_domains/>
+            <pin_labels>
+               <pin_label pin_num="22" pin_signal="PTD15" label="LED_RED_PWM" identifier="LED_RED_PWMLED_RED_PWM;LED_RED_PWM"/>
+               <pin_label pin_num="21" pin_signal="PTD16" label="LED_GREEN_PWM" identifier="LED_GREEN_PWM"/>
+               <pin_label pin_num="81" pin_signal="PTC6" label="UART_RX"/>
+               <pin_label pin_num="80" pin_signal="PTC7" label="UART_TX"/>
+               <pin_label pin_num="4" pin_signal="PTD0" label="LED_BLUE_PWM" identifier="LED_BLUE_PWM"/>
+               <pin_label pin_num="46" pin_signal="PTC14" label="ADC_POT"/>
+               <pin_label pin_num="94" pin_signal="PTE0" label="ECU_HMI" identifier="ECU_HMI"/>
+               <pin_label pin_num="50" pin_signal="PTC12" label="BTN2_SW3_PIN" identifier="BTN2_SW3_PIN"/>
+               <pin_label pin_num="49" pin_signal="PTC13" label="BTN3_SW2_PIN" identifier="BTN3_SW2_PIN"/>
+               <pin_label pin_num="48" pin_signal="PTB2" label="Servo_pwm"/>
+               <pin_label pin_num="83" pin_signal="PTA15" label="ADC_POT"/>
+            </pin_labels>
+         </pins_profile>
+         <functions_list>
+            <function name="BOARD_InitPins">
+               <description>Configures pin routing and optionally pin electrical features.</description>
+               <options>
+                  <callFromInitBoot>true</callFromInitBoot>
+                  <coreID>core0</coreID>
+               </options>
+               <dependencies/>
+               <pins>
+                  <pin peripheral="ADC1" signal="se, 12" pin_num="83" pin_signal="PTA15"/>
+                  <pin peripheral="FTM2" signal="ch, 7" pin_num="1" pin_signal="PTE16">
+                     <pin_features>
+                        <pin_feature name="direction" value="OUTPUT"/>
+                     </pin_features>
+                  </pin>
+               </pins>
+            </function>
+         </functions_list>
+      </pins>
+      <clocks name="Clocks" version="9.0" enabled="true" update_project_code="false">
+         <generated_project_files>
+            <file path="board/clock_config.c" update_enabled="true"/>
+            <file path="board/clock_config.h" update_enabled="true"/>
+         </generated_project_files>
+         <clocks_profile>
+            <processor_version>0.0.0</processor_version>
+         </clocks_profile>
+         <clock_configurations>
+            <clock_configuration name="BOARD_BootClockRUN" id_prefix="" prefix_user_defined="false">
+               <description></description>
+               <options/>
+               <dependencies>
+                  <dependency resourceType="PinSignal" resourceId="SCG.EXTAL" description="&apos;EXTAL&apos; (Pins tool id: SCG.EXTAL, Clocks tool id: SCG.EXTAL) needs to be routed" problem_level="1" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="routed" evaluation="">
+                        <data>true</data>
+                     </feature>
+                     <feature name="direction" evaluation="">
+                        <data>INPUT</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PinSignal" resourceId="SCG.EXTAL" description="&apos;EXTAL&apos; (Pins tool id: SCG.EXTAL, Clocks tool id: SCG.EXTAL) needs to have &apos;INPUT&apos; direction" problem_level="1" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="direction" evaluation="">
+                        <data>INPUT</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PinSignal" resourceId="SCG.XTAL" description="&apos;XTAL&apos; (Pins tool id: SCG.XTAL, Clocks tool id: SCG.XTAL) needs to be routed" problem_level="1" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="routed" evaluation="">
+                        <data>true</data>
+                     </feature>
+                     <feature name="direction" evaluation="">
+                        <data>OUTPUT</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PinSignal" resourceId="SCG.XTAL" description="&apos;XTAL&apos; (Pins tool id: SCG.XTAL, Clocks tool id: SCG.XTAL) needs to have &apos;OUTPUT&apos; direction" problem_level="1" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="direction" evaluation="">
+                        <data>OUTPUT</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PinSignal" resourceId="RTC.rtc_clkin" description="&apos;RTC_CLKIN&apos; (Pins tool id: RTC.rtc_clkin, Clocks tool id: RTC.RTC_CLKIN) needs to be routed" problem_level="1" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="routed" evaluation="">
+                        <data>true</data>
+                     </feature>
+                     <feature name="direction" evaluation="">
+                        <data>INPUT</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PinSignal" resourceId="RTC.rtc_clkin" description="&apos;RTC_CLKIN&apos; (Pins tool id: RTC.rtc_clkin, Clocks tool id: RTC.RTC_CLKIN) needs to have &apos;INPUT&apos; direction" problem_level="1" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="direction" evaluation="">
+                        <data>INPUT</data>
+                     </feature>
+                  </dependency>
+               </dependencies>
+               <clock_sources/>
+               <clock_outputs>
+                  <clock_output id="ADC0_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ADC1_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="BUS_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CLKOUT.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CMP0_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CORE_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CRC0_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="DMA0_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="DMAMUX0_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="EIM0_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ERM0_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="EWM0_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FIRCDIV1_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FIRCDIV2_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLASH_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXCAN0_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXCAN1_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXCAN2_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FTFC0_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FTM0_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FTM1_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FTM2_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FTM3_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FlexIO0_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPI2C0_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPIT0_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPO_1K_CLK.outFreq" value="1 kHz" locked="false" accuracy=""/>
+                  <clock_output id="LPO_CLK.outFreq" value="128 kHz" locked="false" accuracy=""/>
+                  <clock_output id="LPSPI0_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPSPI1_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPSPI2_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPTMR0_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART0_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART1_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART2_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="MPU0_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="MSCM0_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="PDB0_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="PDB1_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="PORTA_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="PORTB_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="PORTC_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="PORTD_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="PORTE_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="RTC0_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="RTC_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SCGCLKOUT.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SIRCDIV1_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SIRCDIV2_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SOSCDIV1_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SOSCDIV2_CLK.outFreq" value="8 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SPLLDIV1_CLK.outFreq" value="56 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SPLLDIV2_CLK.outFreq" value="28 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SPLL_CLK_OUT.outFreq" value="112 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="TRACE_CLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+               </clock_outputs>
+               <clock_settings>
+                  <setting id="HSRUN:SCG.DIVBUS.scale" value="2" locked="true"/>
+                  <setting id="HSRUN:SCG.DIVCORE.scale" value="1" locked="true"/>
+                  <setting id="HSRUN:SCG.DIVSLOW.scale" value="4" locked="true"/>
+                  <setting id="HSRUN:SCG.SCSSEL.sel" value="SCG.SPLL_CLK" locked="false"/>
+                  <setting id="PCC.LPTMR0_FRAC.scale" value="1" locked="true"/>
+                  <setting id="PCC.LPUART0_CLK_SEL.sel" value="SCG.SOSCDIV2_CLK" locked="false"/>
+                  <setting id="PCC.LPUART1_CLK_SEL.sel" value="SCG.SOSCDIV2_CLK" locked="false"/>
+                  <setting id="PCC.LPUART2_CLK_SEL.sel" value="SCG.SOSCDIV2_CLK" locked="false"/>
+                  <setting id="PCC.PREDIV.scale" value="1" locked="true"/>
+                  <setting id="PCC.PREDIVTRACE.scale" value="1" locked="true"/>
+                  <setting id="PCC.TRACE_FRAC.scale" value="1" locked="true"/>
+                  <setting id="RTCCLKSEL.sel" value="SCG.FIRCDIV1_CLK" locked="false"/>
+                  <setting id="RUN:SCG.DIVBUS.scale" value="1" locked="true"/>
+                  <setting id="RUN:SCG.DIVCORE.scale" value="1" locked="true"/>
+                  <setting id="RUN:SCG.DIVSLOW.scale" value="2" locked="true"/>
+                  <setting id="SCG.DIVBUS.scale" value="1" locked="true"/>
+                  <setting id="SCG.DIVCORE.scale" value="1" locked="true"/>
+                  <setting id="SCG.DIVSLOW.scale" value="2" locked="true"/>
+                  <setting id="SCG.FIRCDIV1.scale" value="1" locked="true"/>
+                  <setting id="SCG.FIRCDIV2.scale" value="1" locked="true"/>
+                  <setting id="SCG.PREDIV.scale" value="1" locked="true"/>
+                  <setting id="SCG.SIRCDIV1.scale" value="1" locked="true"/>
+                  <setting id="SCG.SIRCDIV2.scale" value="1" locked="true"/>
+                  <setting id="SCG.SOSCDIV1.scale" value="1" locked="true"/>
+                  <setting id="SCG.SOSCDIV2.scale" value="1" locked="true"/>
+                  <setting id="SCG.SPLLDIV1.scale" value="2" locked="true"/>
+                  <setting id="SCG.SPLLDIV2.scale" value="4" locked="true"/>
+                  <setting id="SCG.SPLL_mul.scale" value="28" locked="true"/>
+                  <setting id="VLPR:SCG.DIVBUS.scale" value="1" locked="true"/>
+                  <setting id="VLPR:SCG.DIVCORE.scale" value="2" locked="true"/>
+                  <setting id="VLPR:SCG.DIVSLOW.scale" value="4" locked="true"/>
+                  <setting id="VLPR:SCG.SCSSEL.sel" value="SCG.SIRC" locked="false"/>
+               </clock_settings>
+               <called_from_default_init>true</called_from_default_init>
+            </clock_configuration>
+         </clock_configurations>
+      </clocks>
+      <ddr name="DDR" version="1.0" enabled="false" update_project_code="true">
+         <generated_project_files/>
+         <components/>
+      </ddr>
+      <dcd name="DCD" version="1.0" enabled="false" update_project_code="true" isSelfTest="false">
+         <generated_project_files/>
+         <dcdx_profile>
+            <processor_version>N/A</processor_version>
+         </dcdx_profile>
+         <dcdx_configurations/>
+      </dcd>
+      <ivt name="IVT" version="1.0" enabled="false" update_project_code="true">
+         <generated_project_files/>
+         <ivt_profile>
+            <processor_version>N/A</processor_version>
+         </ivt_profile>
+      </ivt>
+      <quadspi name="QuadSPI" version="1.0" enabled="false" update_project_code="true">
+         <generated_project_files/>
+         <quadspi_profile>
+            <processor_version>N/A</processor_version>
+         </quadspi_profile>
+      </quadspi>
+      <efuse name="eFUSE" version="1.0" enabled="false" update_project_code="true">
+         <efuse_profile>
+            <processor_version>N/A</processor_version>
+         </efuse_profile>
+      </efuse>
+      <periphs name="Peripherals" version="11.0" enabled="true" update_project_code="true">
+         <dependencies>
+            <dependency resourceType="SWComponent" resourceId="platform.driver.adc" description="ADC driver not found in the toolchain/IDE project. Project will not compile!" problem_level="2" source="Peripherals">
+               <feature name="enabled" evaluation="equal">
+                  <data type="Boolean">true</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.driver.adc" description="Unsupported version of the ADC driver in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. Project might not compile correctly." problem_level="1" source="Peripherals">
+               <feature name="version" evaluation="equivalent">
+                  <data type="Version">1.0.0</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.driver.pdb" description="PDB Driver not found in the toolchain/IDE project. Project will not compile!" problem_level="2" source="Peripherals">
+               <feature name="enabled" evaluation="equal">
+                  <data type="Boolean">true</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.driver.pdb" description="Unsupported version of the PDB Driver in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. Project might not compile correctly." problem_level="1" source="Peripherals">
+               <feature name="version" evaluation="equivalent">
+                  <data type="Version">1.0.0</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.driver.ftm_pwm" description="FTM_PWM Driver not found in the toolchain/IDE project. Project will not compile!" problem_level="2" source="Peripherals">
+               <feature name="enabled" evaluation="equal">
+                  <data type="Boolean">true</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.driver.ftm_pwm" description="Unsupported version of the FTM_PWM Driver in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. Project might not compile correctly." problem_level="1" source="Peripherals">
+               <feature name="version" evaluation="equivalent">
+                  <data type="Version">1.0.0</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.driver.osif" description="OSIF driver not found in the toolchain/IDE project. Project will not compile!" problem_level="2" source="Peripherals">
+               <feature name="enabled" evaluation="equal">
+                  <data type="Boolean">true</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.driver.osif" description="Unsupported version of the OSIF driver in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. Project might not compile correctly." problem_level="1" source="Peripherals">
+               <feature name="version" evaluation="equivalent">
+                  <data type="Version">1.0.0</data>
+               </feature>
+            </dependency>
+         </dependencies>
+         <generated_project_files>
+            <file path="board/peripherals_adc_1.c" update_enabled="true"/>
+            <file path="board/peripherals_adc_1.h" update_enabled="true"/>
+            <file path="board/peripherals_flexTimer_pwm_servo.c" update_enabled="false"/>
+            <file path="board/peripherals_flexTimer_pwm_servo.h" update_enabled="false"/>
+            <file path="board/peripherals_osif_1.c" update_enabled="false"/>
+            <file path="board/peripherals_osif_1.h" update_enabled="false"/>
+            <file path="board/peripherals_pdb_1.c" update_enabled="false"/>
+            <file path="board/peripherals_pdb_1.h" update_enabled="false"/>
+            <file path="board/sdk_project_config.h" update_enabled="true"/>
+         </generated_project_files>
+         <peripherals_profile>
+            <processor_version>0.0.0</processor_version>
+         </peripherals_profile>
+         <functional_groups>
+            <functional_group name="BOARD_InitPeripherals" uuid="aaf5a515-92bb-408c-96f9-1706a1a92f26" called_from_default_init="true" id_prefix="" core="core0">
+               <description></description>
+               <options/>
+               <dependencies/>
+               <instances>
+                  <instance name="adc_1" uuid="32a65595-ad9d-4529-b249-6000bf69785a" type="adc_config" type_id="adc" mode="general" peripheral="ADC_1" enabled="true" comment="" custom_name_enabled="true" editing_lock="false">
+                     <config_set name="adc">
+                        <array name="adcConverterCfg">
+                           <struct name="0">
+                              <setting name="name" value="adc_1_ConvConfig0"/>
+                              <setting name="readonly" value="true"/>
+                              <setting name="clockDivide" value="ADC_CLK_DIVIDE_4"/>
+                              <setting name="sampleTime" value="255"/>
+                              <setting name="resolution" value="ADC_RESOLUTION_12BIT"/>
+                              <setting name="inputClock" value="ADC_CLK_ALT_1"/>
+                              <setting name="trigger" value="ADC_TRIGGER_HARDWARE"/>
+                              <setting name="pretriggerSel" value="ADC_PRETRIGGER_SEL_PDB"/>
+                              <setting name="triggerSel" value="ADC_TRIGGER_SEL_PDB"/>
+                              <setting name="dmaEnable" value="false"/>
+                              <setting name="voltageRef" value="ADC_VOLTAGEREF_VREF"/>
+                              <setting name="continuousConvEnable" value="false"/>
+                              <setting name="supplyMonitoringEnable" value="false"/>
+                           </struct>
+                        </array>
+                        <array name="adcCompareCfg"/>
+                        <array name="adcAverageCfg"/>
+                        <array name="adcChanCfg">
+                           <struct name="0">
+                              <setting name="name" value="adc_1_ChnConfig0"/>
+                              <setting name="readonly" value="false"/>
+                              <setting name="interruptEnable" value="true"/>
+                              <setting name="channel" value="ADC_INPUTCHAN_EXT12"/>
+                           </struct>
+                        </array>
+                     </config_set>
+                  </instance>
+                  <instance name="pdb_1" uuid="b6a53370-ee72-4070-b57f-c26f1d3d0cfb" type="pdb" type_id="pdb" mode="general" peripheral="PDB_1" enabled="true" comment="" custom_name_enabled="true" editing_lock="false">
+                     <config_set name="pdb_driver">
+                        <array name="adcTrigCfgs">
+                           <struct name="0">
+                              <setting name="name" value="pdb_1_adcTrigConfig0"/>
+                              <setting name="readOnly" value="true"/>
+                              <setting name="adcPreTriggerIdx" value="0"/>
+                              <setting name="preTriggerEnable" value="true"/>
+                              <setting name="preTriggerOutputEnable" value="true"/>
+                              <setting name="preTriggerBackToBackEnable" value="false"/>
+                           </struct>
+                        </array>
+                        <array name="pdbCfgs">
+                           <struct name="0">
+                              <setting name="name" value="pdb_1_timerConfig0"/>
+                              <setting name="readOnly" value="true"/>
+                              <setting name="loadValueMode" value="PDB_LOAD_VAL_IMMEDIATELY"/>
+                              <setting name="seqErrIntEnable" value="false"/>
+                              <setting name="clkPreDiv" value="PDB_CLK_PREDIV_BY_128"/>
+                              <setting name="clkPreMultFactor" value="PDB_CLK_PREMULT_FACT_AS_10"/>
+                              <setting name="triggerInput" value="PDB_SOFTWARE_TRIGGER"/>
+                              <setting name="continuousModeEnable" value="false"/>
+                              <setting name="dmaEnable" value="false"/>
+                              <setting name="intEnable" value="false"/>
+                              <setting name="instanceBackToBackEnable" value="false"/>
+                           </struct>
+                        </array>
+                     </config_set>
+                  </instance>
+                  <instance name="flexTimer_pwm_servo" uuid="233abc31-529e-456a-a768-92647e9069d4" type="flexTimer_pwm" type_id="ftm_pwm" mode="general" peripheral="FTM_2" enabled="true" comment="" custom_name_enabled="true" editing_lock="false">
+                     <config_set name="ftm_pwm">
+                        <struct name="ftmPwmUserConfig">
+                           <struct name="ftmPwmInitConfig">
+                              <struct name="ftmPwmClkCfg">
+                                 <setting name="ClockSource" value="FTM_CLOCK_SOURCE_SYSTEMCLK"/>
+                                 <setting name="ftmprescaler" value="64"/>
+                              </struct>
+                              <struct name="ftmPwmGlobalCfg">
+                                 <setting name="ftmMode" value="FTM_MODE_EDGE_ALIGNED_PWM"/>
+                                 <setting name="debugMode" value="FTM_BDM_MODE_11"/>
+                                 <setting name="timerOverInter" value="false"/>
+                                 <setting name="initTrigger" value="false"/>
+                              </struct>
+                              <struct name="ftmPwmRegSyncCfg">
+                                 <setting name="softTrigger" value="true"/>
+                                 <setting name="hardwareTrigger1" value="false"/>
+                                 <setting name="hardwareTrigger2" value="false"/>
+                                 <setting name="hardwareTrigger3" value="false"/>
+                                 <setting name="ftmSyncPoint" value="FTM_UPDATE_NOW"/>
+                                 <setting name="maxload" value="false"/>
+                                 <setting name="minload" value="false"/>
+                                 <setting name="AutoTrigClear" value="false"/>
+                                 <setting name="ftmRegisterUpdate" value="FTM_PWM_SYNC"/>
+                                 <setting name="ftmSoftwareOutControl" value="FTM_PWM_SYNC"/>
+                                 <setting name="ftmOutMaskSync" value="FTM_PWM_SYNC"/>
+                                 <setting name="ftmCounterInitSync" value="FTM_PWM_SYNC"/>
+                              </struct>
+                           </struct>
+                           <struct name="ftmPwmConfiguration">
+                              <struct name="ftmPwmGeneralCfg">
+                                 <setting name="periodInFreq" value="50"/>
+                                 <setting name="deadTimeValue" value="0"/>
+                                 <setting name="deadTimePrescaler" value="FTM_DEADTIME_DIVID_BY_1"/>
+                              </struct>
+                              <struct name="FtmPwmConfigArr">
+                                 <struct name="faultConfig">
+                                    <setting name="faultMode" value="FTM_FAULT_CONTROL_DISABLED"/>
+                                    <setting name="pwmFaultInterrupt" value="false"/>
+                                    <setting name="faultFilterValue" value="0"/>
+                                    <setting name="pwmOutputStateOnFault" value="false"/>
+                                    <array name="ftmFaultChannelParam">
+                                       <struct name="0">
+                                          <setting name="faultChannelEnabled" value="false"/>
+                                          <setting name="faultFilterEnabled" value="false"/>
+                                          <setting name="ftmFaultPinPolarity" value="FTM_POLARITY_LOW"/>
+                                       </struct>
+                                       <struct name="1">
+                                          <setting name="faultChannelEnabled" value="false"/>
+                                          <setting name="faultFilterEnabled" value="false"/>
+                                          <setting name="ftmFaultPinPolarity" value="FTM_POLARITY_LOW"/>
+                                       </struct>
+                                       <struct name="2">
+                                          <setting name="faultChannelEnabled" value="false"/>
+                                          <setting name="faultFilterEnabled" value="false"/>
+                                          <setting name="ftmFaultPinPolarity" value="FTM_POLARITY_LOW"/>
+                                       </struct>
+                                       <struct name="3">
+                                          <setting name="faultChannelEnabled" value="false"/>
+                                          <setting name="faultFilterEnabled" value="false"/>
+                                          <setting name="ftmFaultPinPolarity" value="FTM_POLARITY_LOW"/>
+                                       </struct>
+                                    </array>
+                                 </struct>
+                                 <struct name="ftmPwmIndptChnCfg">
+                                    <array name="pwmIndependentChannelConfig">
+                                       <struct name="0">
+                                          <setting name="ftmpwmIndptName" value="flexTimer_pwm_servo_IndependentChannelConfig0"/>
+                                          <setting name="ftmPwmIndptHwChnId" value="7"/>
+                                          <setting name="polarity" value="FTM_POLARITY_HIGH"/>
+                                          <setting name="uDutyCyclePercent" value="0x20"/>
+                                          <setting name="enableExternalTrigger" value="false"/>
+                                          <setting name="safeState" value="FTM_LOW_STATE"/>
+                                          <setting name="enableSecondChannelOutput" value="false"/>
+                                          <setting name="secondChannelPolarity" value="FTM_MAIN_INVERTED"/>
+                                          <setting name="IndptdeadTimeEn" value="false"/>
+                                       </struct>
+                                       <struct name="1">
+                                          <setting name="ftmpwmIndptName" value="flexTimer_pwm_servo_IndependentChannelConfig1"/>
+                                          <setting name="ftmPwmIndptHwChnId" value="1"/>
+                                          <setting name="polarity" value="FTM_POLARITY_HIGH"/>
+                                          <setting name="uDutyCyclePercent" value="0"/>
+                                          <setting name="enableExternalTrigger" value="false"/>
+                                          <setting name="safeState" value="FTM_LOW_STATE"/>
+                                          <setting name="enableSecondChannelOutput" value="false"/>
+                                          <setting name="secondChannelPolarity" value="FTM_MAIN_INVERTED"/>
+                                          <setting name="IndptdeadTimeEn" value="false"/>
+                                       </struct>
+                                    </array>
+                                 </struct>
+                                 <struct name="ftmPwmCombChnCfg">
+                                    <array name="pwmCombinedChannelConfig"/>
+                                 </struct>
+                              </struct>
+                           </struct>
+                        </struct>
+                     </config_set>
+                  </instance>
+                  <instance name="osif_1" uuid="681f44c5-a9aa-4b44-91bb-2717ce469ecc" type="osif" type_id="osif" mode="general" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
+                     <config_set name="osif"/>
+                  </instance>
+               </instances>
+            </functional_group>
+         </functional_groups>
+         <components/>
+      </periphs>
+   </tools>
+</configuration>
