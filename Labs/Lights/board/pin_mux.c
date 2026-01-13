@@ -2,7 +2,7 @@
 /*
  * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!GlobalInfo
-product: Pins v17.0
+product: Pins v11.0
 processor: S32K144
 package_id: S32K144_LQFP100
 mcu_data: s32sdk_s32k1xx_rtm_401
@@ -36,10 +36,10 @@ processor_version: 0.0.0
 BOARD_InitPins:
 - options: {callFromInitBoot: 'true', coreID: core0}
 - pin_list:
-  - {pin_num: '40', peripheral: PORTC, signal: 'port, 0', pin_signal: PTC0, direction: OUTPUT}
-  - {pin_num: '22', peripheral: PORTD, signal: 'port, 15', pin_signal: PTD15, direction: OUTPUT}
-  - {pin_num: '21', peripheral: PORTD, signal: 'port, 16', pin_signal: PTD16, direction: OUTPUT}
-  - {pin_num: '4', peripheral: PORTD, signal: 'port, 0', pin_signal: PTD0, direction: OUTPUT}
+  - {pin_num: '40', peripheral: PORTC, signal: 'port, 0', pin_signal: PTC0, direction: OUTPUT, PS: state_0}
+  - {pin_num: '22', peripheral: PORTD, signal: 'port, 15', pin_signal: PTD15, direction: OUTPUT, PS: state_0}
+  - {pin_num: '21', peripheral: PORTD, signal: 'port, 16', pin_signal: PTD16, direction: OUTPUT, PS: state_0}
+  - {pin_num: '4', peripheral: PORTD, signal: 'port, 0', pin_signal: PTD0, direction: OUTPUT, PS: state_0}
   - {pin_num: '93', peripheral: PORTE, signal: 'port, 1', pin_signal: PTE1, direction: INPUT, PS: state_0, initValue: state_0}
   - {pin_num: '32', peripheral: PORTD, signal: 'port, 6', pin_signal: PTD6, direction: OUTPUT}
   - {pin_num: '17', peripheral: PORTE, signal: 'port, 14', pin_signal: PTE14, direction: INPUT}

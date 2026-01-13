@@ -1,8 +1,8 @@
-/*
- * Copyright (c) 2015 - 2016 , Freescale Semiconductor, Inc.
- * Copyright 2016-2020 NXP
- * All rights reserved.
- *
+/* 
+ * Copyright (c) 2015 - 2016 , Freescale Semiconductor, Inc.                             
+ * Copyright 2016-2020 NXP                                                                    
+ * All rights reserved.                                                                  
+ *                                                                                       
  * NXP Confidential. This software is owned or controlled by NXP and may only be
  * used strictly in accordance with the applicable license terms. By expressly
  * accepting such terms or by downloading, installing, activating and/or otherwise
@@ -10,12 +10,14 @@
  * comply with and are bound by, such license terms. If you do not agree to be
  * bound by the applicable license terms, then you may not retain, install,
  * activate or otherwise use the software. The production use license in
- * Section 2.3 is expressly granted for this software.
+ * Section 2.3 is expressly granted for this software.                          
  */
 
-#include "helper_functions.h"
+#ifndef SOURCES_HELPER_FUNCTIONS_H_
+#define SOURCES_HELPER_FUNCTIONS_H_
+
+#include "device_registers.h"
 #include <stdint.h>
-#include <stdbool.h>
 
 /***********************************
  * @brief: Convert a float to null terminated char array
@@ -23,55 +25,19 @@
  * @param destStr:   pointer to the destination string
  * @param maxLen:    maximum lenght of the string
  ***********************************/
-void
-floatToStr (const float *srcValue, char *destStr, uint8_t maxLen)
-{
-  uint8_t i, lessThanOne = 0;
-  float tempVal = (*srcValue);
-  uint8_t currentVal;
-
-  if (tempVal < 0)
-    {
-      tempVal *= -1;
-      *destStr = '-';
-      destStr++;
-    }
-  for (i = 0; i < maxLen; i++)
-    {
-      currentVal = (uint8_t) (tempVal);
-      *destStr = currentVal + 48;
-      destStr++;
-      tempVal -= currentVal;
-      if ((tempVal < 1) && (lessThanOne == 0))
-	{
-	  *destStr = '.';
-	  destStr++;
-	  lessThanOne = 1;
-	}
-      tempVal *= 10;
-    }
-  *destStr = 0;
-}
+void floatToStr(const float *srcValue, char *destStr, uint8_t maxLen);
 
 /***********************************
  * @brief: Wait for a number of cycles
  * @param nbOfCycles is number of cycles to be waited for
  ***********************************/
-void
-v_delayCycles (uint32_t nbOfCycles)
-{
-  volatile uint32_t i = nbOfCycles;
-  while (i--)
-    ;
-}
+void v_delayCycles(uint32_t nbOfCycles);
 
 /* Method that enables on-device FPU
  * param: 	None
  * return:	None
  */
 
-void enableFPU(void)
-{
-	/* Enable FPU set both CPACR[CP11] and CPACR[CP10] to Full Access - 0b11 */
-	S32_SCB->CPACR |= (S32_SCB_CPACR_CP10_MASK | S32_SCB_CPACR_CP11_MASK);
-}
+void enableFPU(void);
+
+#endif /* SOURCES_HELPER_FUNCTIONS_H_ */
