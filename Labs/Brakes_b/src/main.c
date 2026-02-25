@@ -40,7 +40,7 @@
 
 /* Port connected to LED strip --> used to send the color encoding */
 #define LED_STRIP_PORT PTD
-#define LED_STRIP_PIN  1 << 0U
+#define LED_STRIP_PIN  1 << 7U
 
 /* Delays for the LED strip control */
 #define DELAY_50        1 // Will be used to generate a "1" logic - both high and low
@@ -57,8 +57,8 @@ uint8_t leds_on = 0;
 
 typedef struct RGB
 {
-	uint8_t g;
 	uint8_t r;
+	uint8_t g;
 	uint8_t b;
 } RGB_t;
 

@@ -99,6 +99,21 @@ BOARD_InitPins:
 		.digitalFilter   = false,
 		.initValue       = 0U,
     },
+    {
+		.base            = PORTD,
+		.pinPortIdx      = 7U,
+		.pullConfig      = PORT_INTERNAL_PULL_NOT_ENABLED,
+		.driveSelect     = PORT_HIGH_DRIVE_STRENGTH,
+		.passiveFilter   = false,
+		.mux             = PORT_MUX_AS_GPIO,
+		.pinLock         = false,
+		.intConfig       = PORT_DMA_INT_DISABLED,
+		.clearIntFlag    = false,
+		.gpioBase        = PTD,
+		.direction       = GPIO_OUTPUT_DIRECTION,
+		.digitalFilter   = false,
+		.initValue       = 0U,
+    },
   };
 /***********************************************************************************************************************
  * EOF
