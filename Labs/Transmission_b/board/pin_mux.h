@@ -23,7 +23,7 @@ extern "C" {
 
 /*! @brief Definitions/Declarations for BOARD_InitPins Functional Group */
 /*! @brief User number of configured pins */
-#define NUM_OF_CONFIGURED_PINS0 4
+#define NUM_OF_CONFIGURED_PINS0 6
 /*! @brief User configuration structure */
 extern pin_settings_config_t g_pin_mux_InitConfigArr0[NUM_OF_CONFIGURED_PINS0];
 

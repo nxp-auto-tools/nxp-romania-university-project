@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding= "UTF-8" ?>
-<configuration name="S32K144" xsi:schemaLocation="http://mcuxpresso.nxp.com/XSD/mex_configuration_15 http://mcuxpresso.nxp.com/XSD/mex_configuration_15.xsd" uuid="78d5749b-a417-48e3-96f2-7e483e51b4a7" version="15" xmlns="http://mcuxpresso.nxp.com/XSD/mex_configuration_15" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<configuration name="S32K144" xsi:schemaLocation="http://mcuxpresso.nxp.com/XSD/mex_configuration_11 http://mcuxpresso.nxp.com/XSD/mex_configuration_11.xsd" uuid="78d5749b-a417-48e3-96f2-7e483e51b4a7" version="11" xmlns="http://mcuxpresso.nxp.com/XSD/mex_configuration_11" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <common>
       <processor>S32K144</processor>
       <package>S32K144_LQFP100</package>
@@ -15,16 +15,16 @@
       <generate_code_modified_registers_only>false</generate_code_modified_registers_only>
       <update_include_paths>true</update_include_paths>
       <generate_registers_defines>false</generate_registers_defines>
-      <enable_code_preview>true</enable_code_preview>
    </preferences>
    <tools>
-      <pins name="Pins" version="15.0" enabled="true" update_project_code="true">
+      <pins name="Pins" version="11.0" enabled="true" update_project_code="true">
          <generated_project_files>
             <file path="board/pin_mux.c" update_enabled="true"/>
             <file path="board/pin_mux.h" update_enabled="true"/>
          </generated_project_files>
          <pins_profile>
             <processor_version>0.0.0</processor_version>
+            <power_domains/>
             <pin_labels>
                <pin_label pin_num="22" pin_signal="PTD15" label="MOTOR_IN" identifier="LED_RED_PWMLED_RED_PWM;LED_RED_PWM"/>
                <pin_label pin_num="21" pin_signal="PTD16" label="MOTOR_DIR" identifier="LED_GREEN_PWM"/>
@@ -41,11 +41,6 @@
                <pin_label pin_num="17" pin_signal="PTE14" label="MOTOR_DIR"/>
                <pin_label pin_num="67" pin_signal="PTB13" label="MOTOR_IN"/>
             </pin_labels>
-            <external_user_signals>
-               <routingDetailsColumns/>
-               <properties/>
-            </external_user_signals>
-            <power_domains/>
          </pins_profile>
          <functions_list>
             <function name="BOARD_InitPins">
@@ -72,11 +67,13 @@
                         <pin_feature name="direction" value="OUTPUT"/>
                      </pin_features>
                   </pin>
+                  <pin peripheral="CAN0" signal="rxd, rxd" pin_num="9" pin_signal="PTE4"/>
+                  <pin peripheral="CAN0" signal="txd, txd" pin_num="8" pin_signal="PTE5"/>
                </pins>
             </function>
          </functions_list>
       </pins>
-      <clocks name="Clocks" version="13.0" enabled="true" update_project_code="true">
+      <clocks name="Clocks" version="9.0" enabled="true" update_project_code="true">
          <generated_project_files>
             <file path="board/clock_config.c" update_enabled="true"/>
             <file path="board/clock_config.h" update_enabled="true"/>
@@ -254,103 +251,68 @@
             <processor_version>N/A</processor_version>
          </efuse_profile>
       </efuse>
-      <gtm name="GTM" version="1.0" enabled="false" update_project_code="true">
-         <generated_project_files/>
-         <gtm_profile>
-            <processor_version>N/A</processor_version>
-         </gtm_profile>
-      </gtm>
-      <periphs name="Peripherals" version="14.0" enabled="true" update_project_code="true">
+      <periphs name="Peripherals" version="11.0" enabled="true" update_project_code="true">
          <dependencies>
-            <dependency resourceType="SWComponent" resourceId="platform.driver.lpuart" description="LPUART Driver is not found in the toolchain/IDE project. The project will not compile!" problem_level="2" source="Peripherals">
+            <dependency resourceType="SWComponent" resourceId="platform.driver.osif" description="OSIF driver not found in the toolchain/IDE project. Project will not compile!" problem_level="2" source="Peripherals">
                <feature name="enabled" evaluation="equal">
                   <data type="Boolean">true</data>
                </feature>
             </dependency>
-            <dependency resourceType="SWComponent" resourceId="platform.driver.lpuart" description="An unsupported version of the LPUART Driver in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. The project might not compile correctly." problem_level="1" source="Peripherals">
+            <dependency resourceType="SWComponent" resourceId="platform.driver.osif" description="Unsupported version of the OSIF driver in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. Project might not compile correctly." problem_level="1" source="Peripherals">
                <feature name="version" evaluation="equivalent">
                   <data type="Version">1.0.0</data>
                </feature>
             </dependency>
-            <dependency resourceType="SWComponent" resourceId="platform.driver.osif" description="OSIF driver is not found in the toolchain/IDE project. The project will not compile!" problem_level="2" source="Peripherals">
+            <dependency resourceType="SWComponent" resourceId="platform.driver.ftm_pwm" description="FTM_PWM Driver not found in the toolchain/IDE project. Project will not compile!" problem_level="2" source="Peripherals">
                <feature name="enabled" evaluation="equal">
                   <data type="Boolean">true</data>
                </feature>
             </dependency>
-            <dependency resourceType="SWComponent" resourceId="platform.driver.osif" description="An unsupported version of the OSIF driver in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. The project might not compile correctly." problem_level="1" source="Peripherals">
+            <dependency resourceType="SWComponent" resourceId="platform.driver.ftm_pwm" description="Unsupported version of the FTM_PWM Driver in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. Project might not compile correctly." problem_level="1" source="Peripherals">
                <feature name="version" evaluation="equivalent">
                   <data type="Version">1.0.0</data>
                </feature>
             </dependency>
-            <dependency resourceType="SWComponent" resourceId="platform.driver.edma" description="eDMA Driver is not found in the toolchain/IDE project. The project will not compile!" problem_level="2" source="Peripherals">
+            <dependency resourceType="SWComponent" resourceId="platform.driver.adc" description="ADC driver not found in the toolchain/IDE project. Project will not compile!" problem_level="2" source="Peripherals">
                <feature name="enabled" evaluation="equal">
                   <data type="Boolean">true</data>
                </feature>
             </dependency>
-            <dependency resourceType="SWComponent" resourceId="platform.driver.edma" description="An unsupported version of the eDMA Driver in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. The project might not compile correctly." problem_level="1" source="Peripherals">
+            <dependency resourceType="SWComponent" resourceId="platform.driver.adc" description="Unsupported version of the ADC driver in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. Project might not compile correctly." problem_level="1" source="Peripherals">
                <feature name="version" evaluation="equivalent">
                   <data type="Version">1.0.0</data>
                </feature>
             </dependency>
-            <dependency resourceType="SWComponent" resourceId="platform.driver.ftm_pwm" description="FTM_PWM Driver is not found in the toolchain/IDE project. The project will not compile!" problem_level="2" source="Peripherals">
+            <dependency resourceType="SWComponent" resourceId="platform.driver.pdb" description="PDB Driver not found in the toolchain/IDE project. Project will not compile!" problem_level="2" source="Peripherals">
                <feature name="enabled" evaluation="equal">
                   <data type="Boolean">true</data>
                </feature>
             </dependency>
-            <dependency resourceType="SWComponent" resourceId="platform.driver.ftm_pwm" description="An unsupported version of the FTM_PWM Driver in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. The project might not compile correctly." problem_level="1" source="Peripherals">
+            <dependency resourceType="SWComponent" resourceId="platform.driver.pdb" description="Unsupported version of the PDB Driver in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. Project might not compile correctly." problem_level="1" source="Peripherals">
                <feature name="version" evaluation="equivalent">
                   <data type="Version">1.0.0</data>
                </feature>
             </dependency>
-            <dependency resourceType="SWComponent" resourceId="platform.driver.adc" description="ADC driver is not found in the toolchain/IDE project. The project will not compile!" problem_level="2" source="Peripherals">
+            <dependency resourceType="SWComponent" resourceId="platform.driver.flexcan" description="FLEXCAN Driver not found in the toolchain/IDE project. Project will not compile!" problem_level="2" source="Peripherals">
                <feature name="enabled" evaluation="equal">
                   <data type="Boolean">true</data>
                </feature>
             </dependency>
-            <dependency resourceType="SWComponent" resourceId="platform.driver.adc" description="An unsupported version of the ADC driver in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. The project might not compile correctly." problem_level="1" source="Peripherals">
+            <dependency resourceType="SWComponent" resourceId="platform.driver.flexcan" description="Unsupported version of the FLEXCAN Driver in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. Project might not compile correctly." problem_level="1" source="Peripherals">
                <feature name="version" evaluation="equivalent">
                   <data type="Version">1.0.0</data>
-               </feature>
-            </dependency>
-            <dependency resourceType="SWComponent" resourceId="platform.driver.pdb" description="PDB Driver is not found in the toolchain/IDE project. The project will not compile!" problem_level="2" source="Peripherals">
-               <feature name="enabled" evaluation="equal">
-                  <data type="Boolean">true</data>
-               </feature>
-            </dependency>
-            <dependency resourceType="SWComponent" resourceId="platform.driver.pdb" description="An unsupported version of the PDB Driver in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. The project might not compile correctly." problem_level="1" source="Peripherals">
-               <feature name="version" evaluation="equivalent">
-                  <data type="Version">1.0.0</data>
-               </feature>
-            </dependency>
-            <dependency resourceType="SWComponent" resourceId="platform.driver.lpit" description="LPIT Driver is not found in the toolchain/IDE project. The project will not compile!" problem_level="2" source="Peripherals">
-               <feature name="enabled" evaluation="equal">
-                  <data type="Boolean">true</data>
-               </feature>
-            </dependency>
-            <dependency resourceType="SWComponent" resourceId="platform.driver.lpit" description="An unsupported version of the LPIT Driver in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. The project might not compile correctly." problem_level="1" source="Peripherals">
-               <feature name="version" evaluation="equivalent">
-                  <data type="Version">1.0.0</data>
-               </feature>
-            </dependency>
-            <dependency resourceType="Tool" resourceId="Clocks" description="The Clocks tool is required by the Peripherals tool, but it is disabled." problem_level="2" source="Peripherals">
-               <feature name="enabled" evaluation="equal">
-                  <data>true</data>
                </feature>
             </dependency>
          </dependencies>
          <generated_project_files>
-            <file path="board/peripherals_ADC_0.c" update_enabled="true"/>
-            <file path="board/peripherals_ADC_0.h" update_enabled="true"/>
-            <file path="board/peripherals_edma_config.c" update_enabled="true"/>
-            <file path="board/peripherals_edma_config.h" update_enabled="true"/>
+            <file path="board/peripherals_ADC_1.c" update_enabled="true"/>
+            <file path="board/peripherals_ADC_1.h" update_enabled="true"/>
             <file path="board/peripherals_flexTimer_pwm_motor.c" update_enabled="true"/>
             <file path="board/peripherals_flexTimer_pwm_motor.h" update_enabled="true"/>
             <file path="board/peripherals_flexTimer_pwm_servo.c" update_enabled="true"/>
             <file path="board/peripherals_flexTimer_pwm_servo.h" update_enabled="true"/>
-            <file path="board/peripherals_lpit_config_1.c" update_enabled="true"/>
-            <file path="board/peripherals_lpit_config_1.h" update_enabled="true"/>
-            <file path="board/peripherals_lpuart_LPUART_1.c" update_enabled="true"/>
-            <file path="board/peripherals_lpuart_LPUART_1.h" update_enabled="true"/>
+            <file path="board/peripherals_flexcan.c" update_enabled="true"/>
+            <file path="board/peripherals_flexcan.h" update_enabled="true"/>
             <file path="board/peripherals_osif.c" update_enabled="true"/>
             <file path="board/peripherals_osif.h" update_enabled="true"/>
             <file path="board/peripherals_pdb_1.c" update_enabled="true"/>
@@ -366,63 +328,8 @@
                <options/>
                <dependencies/>
                <instances>
-                  <instance name="lpuart_LPUART_1" uuid="56edee29-5b1c-4ed8-b879-2375cf16cd80" type="lpuart_config" type_id="lpuart" mode="general" peripheral="LPUART_1" enabled="true" comment="" custom_name_enabled="true" editing_lock="false">
-                     <config_set name="lpuart_driver">
-                        <setting name="lpuart_state_name" value="lpUartState1"/>
-                        <array name="lpuart_configuration">
-                           <struct name="0">
-                              <setting name="name" value="lpUartInitConfig1"/>
-                              <setting name="readonly" value="false"/>
-                              <setting name="transferType" value="LPUART_USING_INTERRUPTS"/>
-                              <setting name="baudRate" value="9600"/>
-                              <setting name="parityMode" value="LPUART_PARITY_DISABLED"/>
-                              <setting name="stopBitCount" value="LPUART_ONE_STOP_BIT"/>
-                              <setting name="bitCountPerChar" value="LPUART_8_BITS_PER_CHAR"/>
-                              <setting name="rxDMAChannel" value="0"/>
-                              <setting name="txDMAChannel" value="0"/>
-                           </struct>
-                        </array>
-                     </config_set>
-                  </instance>
                   <instance name="osif" uuid="959335fd-a413-4cc2-8ec4-1f34efb31165" type="osif" type_id="osif" mode="general" enabled="true" comment="" custom_name_enabled="true" editing_lock="false">
                      <config_set name="osif"/>
-                  </instance>
-                  <instance name="edma_config" uuid="cfa64d52-e707-4ff1-a378-96746332f8d6" type="edma_config" type_id="edma" mode="general" peripheral="EDMA" enabled="true" comment="" custom_name_enabled="true" editing_lock="false">
-                     <config_set name="edma_driver">
-                        <struct name="settings_edmaUserCfg">
-                           <setting name="userStateStruct" value="dmaController_State"/>
-                           <setting name="userCfgName" value="dmaController_InitConfig"/>
-                           <setting name="readOnly" value="true"/>
-                           <setting name="chnArbitration" value="EDMA_ARBITRATION_FIXED_PRIORITY"/>
-                           <setting name="haltOnError" value="false"/>
-                        </struct>
-                        <struct name="settings_array_edmaChCfg">
-                           <array name="array_chCfgStructs">
-                              <struct name="0">
-                                 <setting name="chStateStructName" value="dmaControllerChn0_State"/>
-                                 <setting name="chConfigName" value="dmaControllerChn0_Config"/>
-                                 <setting name="chType" value="edma_channel_config_t"/>
-                                 <setting name="virtCh" value="0"/>
-                                 <setting name="chPrio" value="EDMA_CHN_DEFAULT_PRIORITY"/>
-                                 <setting name="chReq" value="EDMA_REQ_LPUART1_RX"/>
-                                 <setting name="chCallback" value="NULL"/>
-                                 <setting name="chCallbackParam" value="NULL"/>
-                                 <setting name="enableTrigger" value="false"/>
-                              </struct>
-                              <struct name="1">
-                                 <setting name="chStateStructName" value="dmaControllerChn1_State"/>
-                                 <setting name="chConfigName" value="dmaControllerChn1_Config"/>
-                                 <setting name="chType" value="edma_channel_config_t"/>
-                                 <setting name="virtCh" value="1"/>
-                                 <setting name="chPrio" value="EDMA_CHN_DEFAULT_PRIORITY"/>
-                                 <setting name="chReq" value="EDMA_REQ_LPUART1_TX"/>
-                                 <setting name="chCallback" value="NULL"/>
-                                 <setting name="chCallbackParam" value="NULL"/>
-                                 <setting name="enableTrigger" value="false"/>
-                              </struct>
-                           </array>
-                        </struct>
-                     </config_set>
                   </instance>
                   <instance name="flexTimer_pwm_motor" uuid="a21a4272-a8c2-4da2-b77a-01a83ece8722" type="flexTimer_pwm" type_id="ftm_pwm" mode="general" peripheral="FTM_0" enabled="true" comment="" custom_name_enabled="true" editing_lock="false">
                      <config_set name="ftm_pwm">
@@ -533,11 +440,11 @@
                         </struct>
                      </config_set>
                   </instance>
-                  <instance name="ADC_0" uuid="32a65595-ad9d-4529-b249-6000bf69785a" type="adc_config" type_id="adc" mode="general" peripheral="ADC_1" enabled="true" comment="" custom_name_enabled="true" editing_lock="false">
+                  <instance name="ADC_1" uuid="32a65595-ad9d-4529-b249-6000bf69785a" type="adc_config" type_id="adc" mode="general" peripheral="ADC_1" enabled="true" comment="" custom_name_enabled="true" editing_lock="false">
                      <config_set name="adc">
                         <array name="adcConverterCfg">
                            <struct name="0">
-                              <setting name="name" value="ADC_0_ConvConfig0"/>
+                              <setting name="name" value="adc_1_ConvConfig0"/>
                               <setting name="readonly" value="true"/>
                               <setting name="clockDivide" value="ADC_CLK_DIVIDE_4"/>
                               <setting name="sampleTime" value="255"/>
@@ -556,7 +463,7 @@
                         <array name="adcAverageCfg"/>
                         <array name="adcChanCfg">
                            <struct name="0">
-                              <setting name="name" value="ADC_0_ChnConfig0"/>
+                              <setting name="name" value="adc_1_ChnConfig0"/>
                               <setting name="readonly" value="false"/>
                               <setting name="interruptEnable" value="true"/>
                               <setting name="channel" value="ADC_INPUTCHAN_EXT12"/>
@@ -564,7 +471,7 @@
                         </array>
                      </config_set>
                   </instance>
-                  <instance name="pdb_1" uuid="b6a53370-ee72-4070-b57f-c26f1d3d0cfb" type="pdb" type_id="pdb" mode="general" peripheral="PDB_0" enabled="true" comment="" custom_name_enabled="true" editing_lock="false">
+                  <instance name="pdb_1" uuid="b6a53370-ee72-4070-b57f-c26f1d3d0cfb" type="pdb" type_id="pdb" mode="general" peripheral="PDB_1" enabled="true" comment="" custom_name_enabled="true" editing_lock="false">
                      <config_set name="pdb_driver">
                         <array name="adcTrigCfgs">
                            <struct name="0">
@@ -589,31 +496,6 @@
                               <setting name="dmaEnable" value="false"/>
                               <setting name="intEnable" value="false"/>
                               <setting name="instanceBackToBackEnable" value="false"/>
-                           </struct>
-                        </array>
-                     </config_set>
-                  </instance>
-                  <instance name="lpit_config_1" uuid="3a5760fd-9903-48ab-94d4-fd260caad3db" type="lpit_config" type_id="lpit" mode="general" peripheral="LPIT_0" enabled="true" comment="" custom_name_enabled="true" editing_lock="false">
-                     <config_set name="lpit">
-                        <struct name="lpitConfig">
-                           <setting name="name" value="lpit1_InitConfig"/>
-                           <setting name="enableRunInDebug" value="true"/>
-                           <setting name="enableRunInDoze" value="false"/>
-                        </struct>
-                        <array name="lpitChannelConfig">
-                           <struct name="0">
-                              <setting name="name" value="lpit1_ChnConfig0"/>
-                              <setting name="cfgReadOnly" value="false"/>
-                              <setting name="timerMode" value="LPIT_PERIODIC_COUNTER"/>
-                              <setting name="periodUnits" value="LPIT_PERIOD_UNITS_MICROSECONDS"/>
-                              <setting name="period" value="1000000"/>
-                              <setting name="triggerSource" value="LPIT_TRIGGER_SOURCE_EXTERNAL"/>
-                              <setting name="triggerSelect" value="0U"/>
-                              <setting name="enableReloadOnTrigger" value="false"/>
-                              <setting name="enableStopOnInterrupt" value="false"/>
-                              <setting name="enableStartOnTrigger" value="false"/>
-                              <setting name="chainChannel" value="false"/>
-                              <setting name="isInterruptEnabled" value="true"/>
                            </struct>
                         </array>
                      </config_set>
@@ -703,6 +585,35 @@
                               </struct>
                            </struct>
                         </struct>
+                     </config_set>
+                  </instance>
+                  <instance name="flexcan" uuid="c50ad424-a364-429d-b96b-5d6a7baacff5" type="flexcan_config" type_id="flexcan" mode="general" peripheral="CAN0" enabled="true" comment="" custom_name_enabled="true" editing_lock="false">
+                     <config_set name="flexcan">
+                        <struct name="flexcanCfg">
+                           <setting name="name" value="flexcanInitConfig0"/>
+                           <setting name="readonly" value="false"/>
+                           <setting name="flexcan_cfg_flexcanMode" value="FLEXCAN_NORMAL_MODE"/>
+                           <setting name="flexcan_cfg_fd_enable" value="false"/>
+                           <setting name="flexcan_cfg_payload" value="FLEXCAN_PAYLOAD_SIZE_8"/>
+                           <setting name="flexcan_cfg_max_num_mb" value="16"/>
+                           <setting name="flexcan_cfg_num_id_filters" value="FLEXCAN_RX_FIFO_ID_FILTERS_8"/>
+                           <setting name="flexcan_cfg_is_rx_fifo_needed" value="false"/>
+                           <setting name="flexcan_cfg_transfer_type" value="FLEXCAN_RXFIFO_USING_INTERRUPTS"/>
+                           <setting name="flexcan_cfg_rxFifoDMAChannel" value="0"/>
+                           <setting name="flexcan_cfg_pe_clock" value="FLEXCAN_CLK_SOURCE_OSC"/>
+                           <setting name="flexcan_bitrate2ts" value="true"/>
+                           <struct name="flexcan_cfg_time_segments2">
+                              <struct name="flexcan_cfg_bitrate">
+                                 <setting name="flexcan_cfg_rJumpwidth" value="0"/>
+                                 <setting name="input_nominal_bitrate" value="500"/>
+                                 <setting name="input_nominal_sampling" value="87.5"/>
+                              </struct>
+                           </struct>
+                        </struct>
+                        <struct name="flexcanPN">
+                           <setting name="pnOn" value="false"/>
+                        </struct>
+                        <setting name="flexcan_state_name" value="flexcanState0"/>
                      </config_set>
                   </instance>
                </instances>

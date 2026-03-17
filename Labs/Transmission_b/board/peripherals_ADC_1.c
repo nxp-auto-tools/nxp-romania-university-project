@@ -6,7 +6,7 @@
 /* clang-format off */
 /* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!GlobalInfo
-product: Peripherals v14.0
+product: Peripherals v11.0
 processor: S32K144
 package_id: S32K144_LQFP100
 mcu_data: s32sdk_s32k1xx_rtm_401
@@ -22,15 +22,15 @@ functionalGroups:
 /*******************************************************************************
  * Included files 
  ******************************************************************************/
-#include "peripherals_ADC_0.h"
+#include "peripherals_ADC_1.h"
 
 /*******************************************************************************
- * ADC_0 initialization code
+ * ADC_1 initialization code
  ******************************************************************************/
 /* clang-format off */
 /* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 instance:
-- name: 'ADC_0'
+- name: 'ADC_1'
 - type: 'adc_config'
 - mode: 'general'
 - custom_name_enabled: 'true'
@@ -41,7 +41,7 @@ instance:
   - adc:
     - adcConverterCfg:
       - 0:
-        - name: 'ADC_0_ConvConfig0'
+        - name: 'adc_1_ConvConfig0'
         - readonly: 'true'
         - clockDivide: 'ADC_CLK_DIVIDE_4'
         - sampleTime: '255'
@@ -58,7 +58,7 @@ instance:
     - adcAverageCfg: []
     - adcChanCfg:
       - 0:
-        - name: 'ADC_0_ChnConfig0'
+        - name: 'adc_1_ChnConfig0'
         - readonly: 'false'
         - interruptEnable: 'true'
         - channel: 'ADC_INPUTCHAN_EXT12'
@@ -74,7 +74,7 @@ instance:
  *
  */
 
-const adc_converter_config_t ADC_0_ConvConfig0 = {
+const adc_converter_config_t adc_1_ConvConfig0 = {
   .clockDivide = ADC_CLK_DIVIDE_4,
   .sampleTime = 255U,
   .resolution = ADC_RESOLUTION_12BIT,
@@ -88,7 +88,7 @@ const adc_converter_config_t ADC_0_ConvConfig0 = {
   .supplyMonitoringEnable = false
 };
 
-adc_chan_config_t ADC_0_ChnConfig0 = {
+adc_chan_config_t adc_1_ChnConfig0 = {
   .interruptEnable = true,
   .channel = ADC_INPUTCHAN_EXT12
 };

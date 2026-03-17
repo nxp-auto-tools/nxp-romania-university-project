@@ -6,7 +6,7 @@
 /* clang-format off */
 /* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!GlobalInfo
-product: Peripherals v14.0
+product: Peripherals v11.0
 processor: S32K144
 package_id: S32K144_LQFP100
 mcu_data: s32sdk_s32k1xx_rtm_401
@@ -36,7 +36,7 @@ instance:
 - custom_name_enabled: 'true'
 - type_id: 'pdb'
 - functional_group: 'BOARD_InitPeripherals'
-- peripheral: 'PDB_0'
+- peripheral: 'PDB_1'
 - config_sets:
   - pdb_driver:
     - adcTrigCfgs:

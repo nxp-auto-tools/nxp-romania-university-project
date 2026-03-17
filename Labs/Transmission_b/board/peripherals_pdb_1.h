@@ -24,7 +24,7 @@
  ******************************************************************************/
 
 /*! @brief Device instance number */
-#define INST_PDB_0 0U
+#define INST_PDB_1 1U
 
 /*! @brief ADC pre-trigger configuration declarations */
 extern const pdb_adc_pretrigger_config_t pdb_1_adcTrigConfig0;

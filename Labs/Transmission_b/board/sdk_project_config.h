@@ -18,14 +18,12 @@
 /* Include header files for all configured components */
 #include "clock_config.h"
 #include "pin_mux.h"
-#include "peripherals_lpuart_LPUART_1.h"
 #include "peripherals_osif.h"
-#include "peripherals_edma_config.h"
 #include "peripherals_flexTimer_pwm_motor.h"
-#include "peripherals_ADC_0.h"
+#include "peripherals_ADC_1.h"
 #include "peripherals_pdb_1.h"
-#include "peripherals_lpit_config_1.h"
 #include "peripherals_flexTimer_pwm_servo.h"
+#include "peripherals_flexcan.h"
 
 
 #endif /* SDK_PROJECT_CONFIG_H_ */

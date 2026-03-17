@@ -3,8 +3,8 @@
  * will be overwritten if the respective S32 Config Tools is used to update this file.
  **********************************************************************************************************************/
 
-#ifndef ADC_0_H
-#define ADC_0_H
+#ifndef flexcan_H
+#define flexcan_H
 
 /**
  * @page misra_violations MISRA-C:2012 violations
@@ -17,27 +17,17 @@
 /*******************************************************************************
  * Included files 
  ******************************************************************************/
-#include "adc_driver.h"
+#include "flexcan_driver.h"
 
 /*******************************************************************************
  * Definitions 
  ******************************************************************************/
+#define INST_FLEXCAN  (0U)
 
-/*Device instance number */
-#define INST_ADC_0  (1U)
+extern flexcan_state_t flexcanState0;
 
-/*******************************************************************************
- * Global variables 
- ******************************************************************************/
-
-/* User configurations */
-
-/* Converter configuration 0 */
-extern const adc_converter_config_t ADC_0_ConvConfig0;
-
-/* Channel configuration 0 */
-extern adc_chan_config_t ADC_0_ChnConfig0;
+extern flexcan_user_config_t flexcanInitConfig0;
 
 
 
-#endif /* ADC_0_H */
+#endif /* flexcan_H */

@@ -1,453 +1,271 @@
 /*
- * Copyright 2020, 2024 NXP
- *
+ * Copyright 2020, 2024-2025 NXP
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-/* Including necessary configuration files. */
+/* Include files ------------------------------------------------------------------ */
+/* core SDK and system utilities */
 #include "sdk_project_config.h"
-#include "interrupt_manager.h"
 #include "osif.h"
 #include <stdio.h>
 #include <string.h>
-#include <math.h>
-#include "peripherals_pdb_1.h"
 
-/********* DEFINE *******************/
-#define PCC_CLOCK			PCC_PORTD_CLOCK
-#define MOTOR_DIR_PORT		PTE
-#define MOTOR_DIR_PIN		14
-#define MOTOR_IN_PORT		PTB
-#define MOTOR_IN_PIN		13
-#define MOTOR_PWM_CHANNEL	1				// we have configured the flex timer to use channel 1
+/* application modules */
+#include "motor.h"
+#include "servo.h"
+#include "adc_utils.h"
+#include "ftm_utils.h"
+#include "pdb_utils.h"
+#include "clock_utils.h"
+#include "can_utils.h"
 
-#define ADC_INSTANCE    1UL
-#define ADC_CHN         ADC_INPUTCHAN_EXT12
-#define MAX_ACC			100
+/* Macro -------------------------------------------------------------------------- */
+#define TX_MAILBOX 9
+#define RX_MAILBOX 7
 
-#define PTE0 0
-#define PDB_INSTANCE    1UL
+#define MAX_ACC                  (100U)
+#define LOOP_UPDATE_DELAY_MS     (10U)
+#define LOOP_CONTROL_DELAY_MS    (50U)
+#define ADC_ZERO_THRESHOLD       (1U)
+#define INITIAL_GEAR             (0)
+#define ADC_CHANNEL_INDEX        (0U)
 
-/* Timeout in ms for blocking operations on LPUART */
-#define TIMEOUT     500U
+/* Global variables --------------------------------------------------------------- */
+int iExitCode = 0;
+static ftm_instanceConfig_t ftmServoInstance;
+static ftm_instanceConfig_t ftmMotorInstance;
 
-/* Timeout for PDB in microseconds */
-#define PDLY_TIMEOUT   10000UL
+static adc_instanceConfig_t adcInstance;
+static pdb_instanceConfig_t pdbInstance;
 
-#define MIN_DUTY_CYCLE 50
-#define MAX_DUTY_CYCLE 1800
-#define DUTY_CYCLE_TO_VOLTS_SCALE 1.25f
-#define RPM_MAX_DUTY_CYCLE 0x8000	// 32768
+/* Buffer used to store received CAN messages */
+flexcan_msgbuff_t rx_msg;
+uint8_t ui8BrakeLevel = 0;
 
-/* GEARBOX configuration */
-#define MAX_GEAR 6
-#define MIN_GEAR 1
-#define MAX_SPEED 215 // Maximum speed in km/h
-#define MAX_RPM 7000  // Maximum RPM
-#define IDLE_RPM 800  // Idle RPM
-#define GEAR_CHANGE_THRESHOLD 5 // Threshold for smooth gear changes
-#define ACC_ZERO_COUNTER_THRESHOLD 10 // if acceleration is read as 0 X times then turn off motor
+static flexcan_data_info_t rxInfo = { .data_length = 1U,
+                                      .msg_id_type = FLEXCAN_MSG_ID_STD,
+                                      .enable_brs = false,
+                                      .fd_enable = false,
+                                      .fd_padding = 0U
+};
 
-// Speed thresholds for each gear
-const int gearSpeed[MAX_GEAR + 1] = { 3, 20, 40, 70, 110, 160, 200 };
-const float gearRatios[MAX_GEAR + 1] = { 0, 10, 7, 5, 3, 2, 1.5 }; // Approximate gear ratios
+static flexcan_data_info_t txInfo = { .data_length = 4U,
+                                      .msg_id_type = FLEXCAN_MSG_ID_STD,
+                                      .enable_brs = false,
+                                      .fd_enable = false,
+                                      .fd_padding = 0U
 
-/* ******** VARIABLES ***************** */
-volatile int exitCode = 0;
+};
 
-/* PWM duty cycle */
-volatile int servoDutyCycle = 0U;   // Duty cycle needed by the servo to display the current gear
-volatile int currentGear = 1U;      // Current gear (Displayed by the servo position)
-float speed = 0.0;			        // Current speed (Not showed anywhere. For now...)
-int motorDutyCycle = 0U;            // Duty cycle needed by the motor to display the current RPM
-int rpm = IDLE_RPM;					// Current RPM
-volatile int acceleration = 0U;		// Current acceleration level 0 - 100%
-int accelerationZeroCounter = 0U;
-/* Flag used to store if an ADC IRQ was executed */
-volatile bool adcConvDone;
-/* Variable to store value from ADC conversion */
-volatile uint16_t adcRawValue;
+/* Function prototypes ------------------------------------------------------------ */
+/* @brief: Performs a full self-test sequence for both the servo and motor components. */
+void v_selfTest(ftm_instanceConfig_t *ftmMotorInstance,
+                ftm_instanceConfig_t *ftmServoInstance);
+/* @brief: Initializes all core system components required for application startup. */
+void v_init(void);
+/* @brief: Read the conversion result, store it into a variable and set a specified flag. */
+void v_ADC_IRQHandler(void);
+/* @brief: Installs and enables an interrupt handler. */
+void v_interruptInit(IRQn_Type irqNumber, const isr_t isrHandler);
+/* @brief: Callback for FlexCAN to parse incoming messages. */
+void flexcanCallback(uint8_t instance, flexcan_event_type_t eventType,
+                     uint32_t buffIdx, flexcan_state_t *flexcanState);
 
-/*  ***** FUNCTIONS  ******** */
-
-/* @brief: ADC Interrupt Service Routine.
- *        Read the conversion result, store it
- *        into a variable and set a specified flag.
- */
-void ADC_IRQHandler(void) {
-    /* Get channel result from ADC channel */
-    ADC_DRV_GetChanResult(ADC_INSTANCE, 0U, (uint16_t*) &adcRawValue);
-    /* Set ADC conversion complete flag */
-    adcConvDone = true;
-}
-
-/* @brief: Calculate the values to be used by pdb to generate
- *        a interrupt at a specific timeout.
- * @param pdbConfig: pointer to the PDB configuration struct
- * @param type:      pdb_timer_config_t *
- * @param uSec:      interval for pdb interrupt in microseconds
- * @param type:      uint32_t
- * @param intVal:    pointer to the storage element where to set the calculated value
- * @param type:      uint16_t
- * @return:          Returns true if the interrupt period can be achieved, false if not
- * @return type:     bool
- */
-bool calculateIntValue(const pdb_timer_config_t *pdbConfig, uint32_t uSec,
-        uint16_t *intVal) {
-    /* Local variables used to store different parameters
-     * such as frequency and prescalers
-     */
-    uint32_t intVal_l = 0;
-    uint8_t pdbPrescaler = (1 << pdbConfig->clkPreDiv);
-    uint8_t pdbPrescalerMult = 0;
-    uint32_t pdbFrequency;
-
-    bool resultValid = false;
-
-    /* Get the Prescaler Multiplier from the configuration structure */
-    switch (pdbConfig->clkPreMultFactor) {
-    case PDB_CLK_PREMULT_FACT_AS_1:
-        pdbPrescalerMult = 1U;
-        break;
-    case PDB_CLK_PREMULT_FACT_AS_10:
-        pdbPrescalerMult = 10U;
-        break;
-    case PDB_CLK_PREMULT_FACT_AS_20:
-        pdbPrescalerMult = 20U;
-        break;
-    case PDB_CLK_PREMULT_FACT_AS_40:
-        pdbPrescalerMult = 40U;
-        break;
-    default:
-        /* Defaulting the multiplier to 1 to avoid dividing by 0*/
-        pdbPrescalerMult = 1U;
-        break;
-    }
-
-    /* Get the frequency of the PDB clock source and scale it
-     * so that the result will be in microseconds.
-     */
-    CLOCK_SYS_GetFreq(CORE_CLOCK, &pdbFrequency);
-    pdbFrequency /= 1000000;
-
-    /* Calculate the interrupt value for the prescaler, multiplier, frequency
-     * configured and time needed.
-     */
-    intVal_l = (pdbFrequency * uSec) / (pdbPrescaler * pdbPrescalerMult);
-
-    /* Check if the value belongs to the interval */
-    if ((intVal_l == 0) || (intVal_l >= (1 << 16))) {
-        resultValid = false;
-        (*intVal) = 0U;
-    } else {
-        resultValid = true;
-        (*intVal) = (uint16_t) intVal_l;
-    }
-
-    return resultValid;
-}
-
-/* set delay in cycles */
-void delay(volatile int cycles) {
-    /* Delay function - do nothing for a number of cycles */
-    while (cycles--)
-        ;
-}
-
-// Function to calculate RPM based on speed, gear, and acceleration
-void calculateRPM() {
-    // RPM is affected by speed, gear ratio, acceleration, and a factor for slow RPM increase at high speed
-   
-    if (currentGear == 0)
-        return;
-
-    // stop the engine at 0 acceleration
-    if (acceleration == 0)
-        rpm = 0;
-
-    // Calculate RPM base on acceleration with linear scaling
-//	float rpmBase = IDLE_RPM + (MAX_RPM - IDLE_RPM) * (acceleration / 100);
-    // Calculate RPM base on acceleration with exponential scaling
-//	float rpmBase = IDLE_RPM + (MAX_RPM - IDLE_RPM) * sqrt(acceleration / 100);
-    // Calculate RPM base on acceleration with exponential scaling
-    float rpmBase = IDLE_RPM
-            + (MAX_RPM - IDLE_RPM) * (1 - exp(-acceleration / 20.0));
-
-    // Apply a factor that reduces RPM growth as the gear increases
-    float gearFactor = 1.0 / (1 + (currentGear - 1) * 0.1); // Higher gear -> slower RPM increase
-
-    rpmBase = rpmBase * gearFactor;
-
-    // Smoothing the RPM transition by gradually updating with a factor (e.g., 0.2)
-    rpm = rpm * 0.8 + rpmBase * 0.2;
-
-    // if we are in the last gear then allow the RPM to go up to max but with smother transition
-    if (currentGear == MAX_GEAR) {
-        rpmBase = MAX_RPM;
-        rpm = rpm * 0.97 + rpmBase * 0.03;
-    }
-	
-    // TODO: Implement the way RPM is calculated
-    // Keep RPM within IDLE and MAX while engine is on
-}
-
-void displayRPM() {
-    /* The motor has 2 pins for direction: In1 and In2
-     * To set the motor forward we need to set In1 to high and In2 to low
-     * Since the pin In2 is not connected it is considered as low.
-     * We need to set In1 to high in order to have a valid direction.*/
-    // TODO: Set the Motor direction pin to 1
-    MOTOR_DIR_PORT->PSOR = (1 << MOTOR_DIR_PIN);
-
-    /* Duty cycle percent 0-0x8000 -> 0-100%*/
-    motorDutyCycle = rpm * RPM_MAX_DUTY_CYCLE / MAX_RPM;
-    motorDutyCycle = motorDutyCycle * (-1) + RPM_MAX_DUTY_CYCLE;
-
-    // Send Servo command
-    FTM_DRV_UpdatePwmChannel(INST_FLEXTIMER_PWM_MOTOR,
-            flexTimer_pwm_motor_IndependentChannelsConfig[MOTOR_PWM_CHANNEL].hwChannelId,
-            FTM_PWM_UPDATE_IN_DUTY_CYCLE, (uint16_t) motorDutyCycle, 0U, true);
-
-}
-
-// Function to update speed based on acceleration and gear
-void updateSpeed() {
-
-    float acceleration_factor = (float) acceleration / 100.0; // Normalize 0 to 1
-
-    // Accelerate faster in lower gears
-    float gearFactor = 1.0 - (currentGear - 1) * 0.1; // Decrease factor for higher gears (1.1,1,0.9,0.8,0.7,0.6,0.5)
-    if (gearFactor < 0.2)
-        gearFactor = 0.2; // Prevent the factor from going too low
-
-    acceleration_factor *= gearFactor; // Combine the acceleration factor with gear factor
-
-    // Add a hysteresis to gear shift in order to prevent gear fluctuations
-    float shiftUpThreshold = (gearRatios[currentGear] + GEAR_CHANGE_THRESHOLD)
-            * 1.5;
-    // maximum possible speed should be over the shift threshold to be sure we do the gear change
-    float maxPossibleSpeed = gearSpeed[currentGear] + shiftUpThreshold;
-
-    // Breaking:
-    // float breaking = (1.0 / (acceleration + 1)) * (speed / MAX_SPEED); // breaking is inversely proportional to acceleration, but increases with speed
-    float breaking = 1.0 / (acceleration + 1); // breaking is inversely proportional with acceleration (avoid division by 0)
-
-    // Increase speed based on acceleration
-    float addSpeed = acceleration_factor * (maxPossibleSpeed - speed) * 0.25; // Smooth acceleration
-    speed += addSpeed;
-    // Decrease speed based on breaking force
-    float decreaseSpeed = breaking * (speed * 0.2); // Breaking (reduce speed as acceleration drops)
-    speed -= decreaseSpeed;
-    // TODO: Implement the way speed is maintained
-    // keep speed within 0 and MAX_SPEED
-}
-
-// Function to update gear based on speed with smooth transitions
-void updateGear() {
-    int previousGear = currentGear;
-
-    if (speed > 0 && currentGear == 0 && !accelerationZeroCounter) {
-        currentGear++;
-    }
-    else if (speed <= gearSpeed[currentGear] && currentGear == 1 && accelerationZeroCounter > ACC_ZERO_COUNTER_THRESHOLD) {
-        currentGear--;
-    }
-    else if (speed > gearSpeed[currentGear] + GEAR_CHANGE_THRESHOLD
-            && currentGear < MAX_GEAR) {
-        currentGear++;
-    } else if (speed <= gearSpeed[currentGear - 1] && currentGear > MIN_GEAR) {
-        currentGear--;
-    }
-
-    // If gear has changed, adjust the RPM based on the gear change
-    if (previousGear != currentGear) {
-        float rpmChangeFactor;
-
-        // Determine the RPM change factor based on the gear level
-        if (currentGear > previousGear) {
-            // Shifting up (higher gear): reduce RPM more in lower gears, less in higher gears
-            rpmChangeFactor = 0.6 - (currentGear - 1) * 0.07; // Reduce RPM less as the gear increases (0.57, 0.6, 0.53, 0.46, 0.39, 0.32, 0.25)
-            if (rpmChangeFactor < 0.2)
-                rpmChangeFactor = 0.2; // Limit the reduction factor
-
-        } else {
-            if (currentGear == 0)
-                rpmChangeFactor = 0;
-            else {
-                // Shifting down (lower gear): increase RPM more in lower gears, less in higher gears
-                rpmChangeFactor = 1.4 + (currentGear - 1) * 0.07; // Increase RPM more as the gear decreases (1.33, 1.4, 1.47, 1.54, 1.61, 1.68, 1.75)
-                if (rpmChangeFactor > 2.0)
-                    rpmChangeFactor = 2.0; // Limit the increase factor
-            }
-        }
-        rpm = rpm * rpmChangeFactor;
-    // TODO: Gear change logic.
-        // Ensure RPM is within the idle and max RPM limits
-    }
-}
-
-/* @brief: Calculate the values to be sent to the Servo motor in order to indicate
- * the current gear:
- *	Ex: for 6 gears display:
- * 								3rd gear
- * 							2nd gear ^  4th gear
- * 						1st gear     |     5th gear
- * No acceleration (motor off)       |        6th gear
- *
- * Hint: At motor off servoDutyCycle is MIN_DUTY_CYCLE
- *
- */
-void displayGear() {
-    
-    servoDutyCycle = (currentGear * (MAX_DUTY_CYCLE / MAX_GEAR))
-            + MIN_DUTY_CYCLE;
-
-    servoDutyCycle /= DUTY_CYCLE_TO_VOLTS_SCALE;
-/* TODO set servoDutyCycle to the correct value so it indicates the correct position of the speed */
-    // protect the servo to not go over MAX_DUTY_CYCLE
-    // MIN DUTY CYCLE is converted to MAX DUTY CYCLE and vice-versa
-    servoDutyCycle = servoDutyCycle * (-1) + MAX_DUTY_CYCLE + MIN_DUTY_CYCLE;
-
-    if (currentGear == 0)
-        servoDutyCycle = MAX_DUTY_CYCLE;
-
-    // Send Servo command
-    FTM_DRV_UpdatePwmChannel(INST_FLEXTIMER_PWM_SERVO,
-            flexTimer_pwm_servo_IndependentChannelsConfig[0].hwChannelId,
-            FTM_PWM_UPDATE_IN_TICKS, (uint16_t) servoDutyCycle, 0U, true);
-
-}
-
-/* main function */
+/* Main function ------------------------------------------------------------------ */
 int main(void) {
-    uint16_t delayValue = 0;
-    /* Write your local variable definition here */
-    ftm_state_t ftmStateStructMotor;
-    ftm_state_t ftmStateStructServo;
+    uint8_t txData[4] = { 0 };
+    uint8_t previousTxData[4] = { 0 };
 
-    /* Variables in which we store data from ADC */
+    /* local variables */
+    /* current acceleration level 0 - 100% */
+    uint8_t ui8Acceleration = 0U;
+    /* counter for consecutive zero-acceleration readings */
+    uint8_t ui8AccelerationZeroCounter = 0U;
+    v_init();
+    v_selfTest(&ftmMotorInstance, &ftmServoInstance);
 
-    uint16_t adcMax;
-
-    IRQn_Type adcIRQ;
-
-    adcConvDone = false;
-
-    /* Initialize clock module */
-    CLOCK_SYS_Init(g_clockManConfigsArr, CLOCK_MANAGER_CONFIG_CNT,
-            g_clockManCallbacksArr, CLOCK_MANAGER_CALLBACK_CNT);
-    CLOCK_SYS_UpdateConfiguration(0U, CLOCK_MANAGER_POLICY_AGREEMENT);
-
-    /* Initialize pins
-     *    -    See PinSettings component for more info
-     */
-    PINS_DRV_Init(NUM_OF_CONFIGURED_PINS0, g_pin_mux_InitConfigArr0);
-
-    /* Get ADC max value from the resolution */
-    adcMax = (uint16_t) (1 << 12);
-//	adcMax = 3904; // max value read with the debugger
-
-    /* Configure and calibrate the ADC converter
-     *  -   See ADC component for the configuration details
-     */
-    DEV_ASSERT(ADC_0_ChnConfig0.channel == ADC_CHN);
-
-    ADC_DRV_ConfigConverter(ADC_INSTANCE, &ADC_0_ConvConfig0);
-    ADC_DRV_AutoCalibration(ADC_INSTANCE);
-    ADC_DRV_ConfigChan(ADC_INSTANCE, 0UL, &ADC_0_ChnConfig0);
-
-    /* Initialize FTM instance - Motor*/
-    FTM_DRV_Init(INST_FLEXTIMER_PWM_MOTOR, &flexTimer_pwm_motor_InitConfig,
-            &ftmStateStructMotor);
-
-    /* Initialize FTM instance - Servo*/
-    FTM_DRV_Init(INST_FLEXTIMER_PWM_SERVO, &flexTimer_pwm_servo_InitConfig,
-            &ftmStateStructServo);
-
-    /* Initialize FTM PWM - Motor*/
-    FTM_DRV_InitPwm(INST_FLEXTIMER_PWM_MOTOR, &flexTimer_pwm_motor_PwmConfig);
-
-    /* Initialize FTM PWM - Servo*/
-    FTM_DRV_InitPwm(INST_FLEXTIMER_PWM_SERVO, &flexTimer_pwm_servo_PwmConfig);
-
-    switch (ADC_INSTANCE) {
-    case 0UL:
-        adcIRQ = ADC0_IRQn;
-        break;
-    case 1UL:
-        adcIRQ = ADC1_IRQn;
-        break;
-    default:
-        adcIRQ = ADC1_IRQn;
-        break;
-    }
-
-    INT_SYS_InstallHandler(adcIRQ, &ADC_IRQHandler, (isr_t*) 0);
-
-    /* Calculate the value needed for PDB instance
-     * to generate an interrupt at a specified timeout.
-     * If the value can not be reached, stop the application flow
-     */
-    if (!calculateIntValue(&pdb_1_timerConfig0, PDLY_TIMEOUT, &delayValue)) {
-        /* Stop the application flow */
-        while (1)
-            ;
-    }
-
-    /* Setup PDB instance
-     *  -   See PDB component for details
-     *  Note: Pre multiplier and Prescaler values come from
-     *        calculateIntValue function.
-     */
-    PDB_DRV_Init(PDB_INSTANCE, &pdb_1_timerConfig0);
-    PDB_DRV_Enable(PDB_INSTANCE);
-    PDB_DRV_ConfigAdcPreTrigger(PDB_INSTANCE, 0UL, &pdb_1_adcTrigConfig0);
-    PDB_DRV_SetTimerModulusValue(PDB_INSTANCE, (uint32_t) delayValue);
-    PDB_DRV_SetAdcPreTriggerDelayValue(PDB_INSTANCE, 0UL, 0UL,
-            (uint32_t) delayValue);
-    PDB_DRV_LoadValuesCmd(PDB_INSTANCE);
-    PDB_DRV_SoftTriggerCmd(PDB_INSTANCE);
-
-    /* Enable ADC 1 interrupt */
-    INT_SYS_EnableIRQ(adcIRQ);
-
-    // Start position for servo
-    // Send Servo command
-    FTM_DRV_UpdatePwmChannel(INST_FLEXTIMER_PWM_SERVO,
-            flexTimer_pwm_servo_IndependentChannelsConfig[0].hwChannelId,
-            FTM_PWM_UPDATE_IN_TICKS, (uint16_t) MAX_DUTY_CYCLE, 0U, true);
-    // wait to start the engine
-    delay(10000000);
-
-    /* Infinite loop */
+    /* infinite loop */
     while (1) {
-        // update the speed of the car
-        updateSpeed();
-        // switch gear if needed
-        updateGear();
-        // set the servo to indicate the current gear
-        displayGear();
-        // update motor RPM
-        calculateRPM();
-        // send the command to the driver
-        displayRPM();
+    	// TODO 6.2: Add brake application here
+    	// Hint: Check if ui8BrakeLevel > 0, then call v_applyBrakes()
+    	/* COMPLETE HERE */
+        v_updateSpeed(ui8Acceleration);
+        v_updateGear(ui8AccelerationZeroCounter);
+        v_updateRPM();
+        v_displayGear(&ftmServoInstance);
+        v_calculateRPM(ui8Acceleration);
+        v_displayRPM(&ftmMotorInstance);
 
-        OSIF_TimeDelay(10);
+        /* small delay between updates */
+        OSIF_TimeDelay(LOOP_UPDATE_DELAY_MS);
 
-        /* Process the result to get the value for acceleration */
-        if (adcConvDone == true) {
-            /* Process the result to get the value in 0-100 */
-            acceleration = ((adcRawValue * MAX_ACC) / adcMax);
-            if (!acceleration) accelerationZeroCounter++;
-            else accelerationZeroCounter = 0;
-            /* Clear conversion done interrupt flag */
-            adcConvDone = false;
-            /* Trigger PDB timer */
-            PDB_DRV_SoftTriggerCmd(PDB_INSTANCE);
+
+		if (ui8Acceleration < ADC_ZERO_THRESHOLD)
+			ui8AccelerationZeroCounter++;
+		else
+			ui8AccelerationZeroCounter = 0U;
+
+        if (adcInstance.adcConvDone == true && !ui8BrakeLevel) {
+            /* convert raw ADC (Analog to Digital Converter) value to acceleration (0–100%) */
+            v_scaleAdcValue(MAX_ACC, &adcInstance.adcValue);
+            ui8Acceleration = adcInstance.adcValue;
+
+            /* track how long acceleration stays at 0 */
+
+            /* reset the conversion flag */
+            adcInstance.adcConvDone = false;
+            /* start the next ADC (Analog to Digital Converter) conversion using the PDB timer */
+            PDB_DRV_SoftTriggerCmd(pdbInstance.instance);
         }
 
-        delay(500000);
+        txData[0] = ui8_getCurrentGear();
+        uint16_t currentRpm=ui16_getRpm();
+		txData[1] = (uint8_t)(currentRpm >> 8);
+		txData[2] = (uint8_t) currentRpm;
+		txData[3] = (uint8_t) f_getSpeed();
+
+		if ((memcmp(previousTxData, txData, sizeof(previousTxData)) != 0)
+				&& FLEXCAN_DRV_GetTransferStatus(INST_FLEXCAN, TX_MAILBOX) != STATUS_BUSY){
+		   CAN_SendData(TX_MAILBOX, TRANSMISSION_TX_ID, txData, &txInfo);
+		   memcpy(previousTxData, txData, sizeof(txData));
+		}
+        /* delay to control loop speed */
+        OSIF_TimeDelay(LOOP_CONTROL_DELAY_MS);
     }
 
-    return exitCode;
+    return iExitCode;
+}
+
+/* Functions ---------------------------------------------------------------------- */
+/* @brief: Performs a full self-test sequence for both the servo and motor components.
+ *
+ * @return: no return value
+ * @return type: void
+ * Implements: SW_TR_023
+ */
+void v_selfTest(ftm_instanceConfig_t *ftmMotorInstance,
+                ftm_instanceConfig_t *ftmServoInstance) {
+    uint8_t ui8Gear = INITIAL_GEAR;
+    bool ascending = true;
+
+    while (true) {
+        v_motorSelfTest(ui8Gear, ftmMotorInstance);
+        v_servoSelfTest(ui8Gear, ftmServoInstance);
+
+        if (ui8Gear == MAX_GEAR) {
+            ascending = false;
+        } else if ((ui8Gear == 0) && (!ascending)) {
+            break;
+        }
+        ui8Gear += ascending ? 1 : -1;
+    }
+}
+
+/* @brief: Initializes all core system components required for application startup.
+ *
+ * @return: no return value
+ * @return type: void
+ * Implements: SW_TR_003
+ */
+void v_init(void) {
+    adcInstance.instance = INST_ADC_1;
+    adcInstance.chanIndex = ADC_CHANNEL_INDEX;
+    adcInstance.channelConfig = &adc_1_ChnConfig0;
+    adcInstance.converterConfig = &adc_1_ConvConfig0;
+    adcInstance.adcConvDone = false;
+    adcInstance.adcValue = 0U;
+    adcInstance.irqNumber = ADC1_IRQn;
+    adcInstance.isrHandler = &v_ADC_IRQHandler;
+
+    ftmServoInstance.FTM_INSTANCE = INST_FLEXTIMER_PWM_SERVO;
+    ftmServoInstance.ftm_pwmInitConfig = &flexTimer_pwm_servo_InitConfig;
+    ftmServoInstance.ftm_pwmConfig = &flexTimer_pwm_servo_PwmConfig;
+    ftmServoInstance.ftm_stateStruct = (ftm_state_t ) { 0 };
+    ftmServoInstance.hwChannelId = flexTimer_pwm_servo_IndependentChannelsConfig[0].hwChannelId;
+
+    ftmMotorInstance.FTM_INSTANCE = INST_FLEXTIMER_PWM_MOTOR;
+    ftmMotorInstance.ftm_pwmInitConfig = &flexTimer_pwm_motor_InitConfig;
+    ftmMotorInstance.ftm_pwmConfig = &flexTimer_pwm_motor_PwmConfig;
+    ftmMotorInstance.ftm_stateStruct = (ftm_state_t ) { 0 };
+    ftmMotorInstance.hwChannelId = flexTimer_pwm_motor_IndependentChannelsConfig[MOTOR_PWM_CHANNEL].hwChannelId;
+
+    pdbInstance.instance = INST_PDB_1;
+    pdbInstance.timerConfig = &pdb_1_timerConfig0;
+    pdbInstance.pdlyTimeout_microS = PDLY_TIMEOUT;
+    pdbInstance.chn = 0U;
+    pdbInstance.preChn = 0U;
+    pdbInstance.adcTrigConfig = &pdb_1_adcTrigConfig0;
+
+    /* set up the system clock */
+    v_clockInit();
+    /* set up all the configured pins */
+    PINS_DRV_Init(NUM_OF_CONFIGURED_PINS0, g_pin_mux_InitConfigArr0);
+    v_adcInit(&adcInstance);
+
+    INT_SYS_InstallHandler(adcInstance.irqNumber,
+                           adcInstance.isrHandler,
+                           (isr_t*) 0);
+
+    v_ftmInit(&ftmServoInstance);
+    v_ftmInit(&ftmMotorInstance);
+
+    v_pdbInit(&pdbInstance);
+    v_setMotorDirection(&ftmMotorInstance);
+
+    /*CAN INIT*/
+
+    FLEXCAN_DRV_Init(INST_FLEXCAN, &flexcanState0, &flexcanInitConfig0);
+    FLEXCAN_DRV_ConfigTxMb(INST_FLEXCAN, TX_MAILBOX, &txInfo, TRANSMISSION_RX_ID);
+    /* Configure RX message buffer */
+    FLEXCAN_DRV_ConfigRxMb(INST_FLEXCAN, RX_MAILBOX, &rxInfo, BRAKES_TX_ID);
+    /* Installs a callback function for the FlexCAN IRQ handler */
+    FLEXCAN_DRV_InstallEventCallback(INST_FLEXCAN, &flexcanCallback, NULL);
+    /* Start receiving CAN messages on the configured mailbox */
+    FLEXCAN_DRV_Receive(INST_FLEXCAN, RX_MAILBOX, &rx_msg);
+
+    /* enable ADC (Analog to Digital Converter) interrupt */
+    INT_SYS_EnableIRQ(adcInstance.irqNumber);
+}
+
+/* @brief: ADC (Analog to Digital Converter) Interrupt Service Routine.
+ *         Read the conversion result, store it into a variable and set a specified flag.
+ *
+ * @return: no return value
+ * @return type: void
+ */
+void v_ADC_IRQHandler(void) {
+    ADC_DRV_GetChanResult(adcInstance.instance,
+                          adcInstance.chanIndex,
+                          (uint16_t*) &adcInstance.adcValue);
+
+    adcInstance.adcConvDone = true;
+}
+
+/* @brief: Installs and enables an interrupt handler.
+ *
+ * @param irqNumber: the IRQ number representing the specific interrupt to initialize
+ * @param type: IRQn_Type
+ * @param isrHandler: the function pointer to the interrupt service routine to be installed
+ * @param type: isr_t
+ *
+ * @return: no return value
+ * @return type: void
+ */
+void v_interruptInit(IRQn_Type irqNumber, const isr_t isrHandler) {
+    INT_SYS_InstallHandler(irqNumber, isrHandler, (isr_t*) 0);
+
+    /* enable ADC (Analog to Digital Converter) 1 interrupt */
+    INT_SYS_EnableIRQ(irqNumber);
+}
+
+/* @brief: Callback for FlexCAN to parse incoming messages. */
+void flexcanCallback(uint8_t instance, flexcan_event_type_t eventType,
+                     uint32_t buffIdx, flexcan_state_t *flexcanState) {
+    if(eventType == FLEXCAN_EVENT_RX_COMPLETE && buffIdx == RX_MAILBOX){
+        /* Extract brake level (0 to 7 limit) */
+        ui8BrakeLevel = rx_msg.data[0];
+        if (ui8BrakeLevel > 7) ui8BrakeLevel = 7;
+        /* Set up for the next reception */
+        FLEXCAN_DRV_Receive(instance, RX_MAILBOX, &rx_msg);
+    }
 }
