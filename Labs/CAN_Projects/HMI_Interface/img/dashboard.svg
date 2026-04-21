@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="700" height="450" viewBox="0 0 650 460" xmlns="http://www.w3.org/2000/svg">
+  <!--
+    Realistic Car Dashboard (Speedometer + Tachometer)
+    Assumptions:
+      - Speedometer: 0–200 (km/h)
+      - Tachometer: 0–700 (RPM ×10), i.e., 700 corresponds to ~7000 RPM
+    Gauge sweep: -120° (left) to +120° (right) = 240° sweep
+  -->
+
+  <defs>
+    <!-- Soft glow for needles and highlights -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Inner shadow/gradient ring -->
+    <radialGradient id="bezel" cx="50%" cy="50%" r="0%">
+      <stop offset="0%" stop-color="#0f141a"/>
+      <stop offset="70%" stop-color="#121922"/>
+      <stop offset="100%" stop-color="#090d12"/>
+    </radialGradient>
+
+    <!-- Face gradient -->
+    <!-- <linearGradient id="face" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0d131a"/>
+      <stop offset="100%" stop-color="#274d7c"/>
+    </linearGradient> -->
+
+    <!-- Needle gradient -->
+    <linearGradient id="needleGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ff5555"/>
+      <stop offset="100%" stop-color="#b30000"/>
+    </linearGradient>
+
+    <!-- Tick styles -->
+    <style>
+      .dial-face { fill: url(#face); stroke: #1f2a38; stroke-width: 2; }
+      .bezel     { fill: url(#bezel); }
+      .ring      { fill: none; stroke: #1e2a38; stroke-width: 12; }
+      .tick-major { stroke: #d8e2f1; stroke-width: 3; stroke-linecap: round; }
+      .tick-minor { stroke: #7f8da3; stroke-width: 2; stroke-linecap: round; }
+      .label     { fill: #d8e2f1; font-family: "Segoe UI", Roboto, Arial, sans-serif; font-weight: 600; }
+      .unit      { fill: #9fb2cc; font-family: "Segoe UI", Roboto, Arial, sans-serif; font-size: 14px; letter-spacing: 1px; }
+      .center-cap { fill: #1a2430; stroke: #2e3b4f; stroke-width: 2; }
+      .center-dot { fill: #2f3e52; }
+      .needle    { fill: url(#needleGrad); filter: url(#glow); }
+      .needle-base { fill: #2b384b; stroke: #425471; stroke-width: 1.5; }
+      .shadow-arc { fill: none; stroke: rgba(0,0,0,0.3); stroke-width: 20; }
+      .ui-text   { fill: #c9d6ea; font-family: "Segoe UI", Roboto, Arial, sans-serif; font-size: 18px; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <!-- <rect x="0" y="0" width="100%" height="100%" fill="#0b0f14"/> -->
+
+  <!-- Layout params -->
+  <!-- Left tachometer center (cx1, cy), right speedometer center (cx2, cy) -->
+  <!-- Outer radius R, tick radii -->
+  <g id="dashboard">
+    <!-- Centers & radii -->
+    <!-- Tachometer -->
+    <g id="tach" data-max="700" transform="translate(-50,30) scale(0.7, 0.7)">
+      <!-- Geometry -->
+      <!-- Center: (300,260), radius: 180 -->
+      <g id="tach-geo">
+        <circle class="bezel" cx="300" cy="260" r="200"/>
+        <circle class="dial-face" cx="300" cy="260" r="180"/>
+        <circle class="ring" cx="300" cy="260" r="170"/>
+      </g>
+
+      <!-- Major ticks (0..700 step 100) at angles:
+           v=0:-120, 100:-85.714, 200:-51.429, 300:-17.143, 400:17.143, 500:51.429, 600:85.714, 700:120 -->
+      <!-- Each tick is a vertical segment rotated about (300,260).
+           Radii: outer R=170, inner R-18=152 -->
+      <g id="tach-ticks-major">
+        <g transform="rotate(-120 300 260)"><line class="tick-major" x1="300" y1="108" x2="300" y2="90"/></g>
+        <g transform="rotate(-85.714 300 260)"><line class="tick-major" x1="300" y1="108" x2="300" y2="90"/></g>
+        <g transform="rotate(-51.429 300 260)"><line class="tick-major" x1="300" y1="108" x2="300" y2="90"/></g>
+        <g transform="rotate(-17.143 300 260)"><line class="tick-major" x1="300" y1="108" x2="300" y2="90"/></g>
+        <g transform="rotate(17.143 300 260)"><line class="tick-major" x1="300" y1="108" x2="300" y2="90"/></g>
+        <g transform="rotate(51.429 300 260)"><line class="tick-major" x1="300" y1="108" x2="300" y2="90"/></g>
+        <g transform="rotate(85.714 300 260)"><line class="tick-major" x1="300" y1="108" x2="300" y2="90"/></g>
+        <g transform="rotate(120 300 260)"><line class="tick-major" x1="300" y1="108" x2="300" y2="90"/></g>
+      </g>
+
+      <!-- Minor ticks (every 50: 50..650) angles:
+           -102.857, -68.571, -34.286, 0, 34.286, 68.571, 102.857 -->
+      <!-- Minor tick radii: outer 170, inner 160 -->
+      <g id="tach-ticks-minor">
+        <g transform="rotate(-102.857 300 260)"><line class="tick-minor" x1="300" y1="110" x2="300" y2="100"/></g>
+        <g transform="rotate(-68.571 300 260)"><line class="tick-minor" x1="300" y1="110" x2="300" y2="100"/></g>
+        <g transform="rotate(-34.286 300 260)"><line class="tick-minor" x1="300" y1="110" x2="300" y2="100"/></g>
+        <g transform="rotate(0 300 260)"><line class="tick-minor" x1="300" y1="110" x2="300" y2="100"/></g>
+        <g transform="rotate(34.286 300 260)"><line class="tick-minor" x1="300" y1="110" x2="300" y2="100"/></g>
+        <g transform="rotate(68.571 300 260)"><line class="tick-minor" x1="300" y1="110" x2="300" y2="100"/></g>
+        <g transform="rotate(102.857 300 260)"><line class="tick-minor" x1="300" y1="110" x2="300" y2="100"/></g>
+      </g>
+
+      <!-- Labels at major ticks (0..700) placed at radius 138 -->
+      <g id="tach-labels" font-size="16" class="label">
+        <g transform="rotate(-120 300 260)"><text x="300" y="122" text-anchor="middle" dominant-baseline="middle">0</text></g>
+        <g transform="rotate(-85.714 300 260)"><text x="300" y="122" text-anchor="middle" dominant-baseline="middle">100</text></g>
+        <g transform="rotate(-51.429 300 260)"><text x="300" y="122" text-anchor="middle" dominant-baseline="middle">200</text></g>
+        <g transform="rotate(-17.143 300 260)"><text x="300" y="122" text-anchor="middle" dominant-baseline="middle">300</text></g>
+        <g transform="rotate(17.143 300 260)"><text x="300" y="122" text-anchor="middle" dominant-baseline="middle">400</text></g>
+        <g transform="rotate(51.429 300 260)"><text x="300" y="122" text-anchor="middle" dominant-baseline="middle">500</text></g>
+        <g transform="rotate(85.714 300 260)"><text x="300" y="122" text-anchor="middle" dominant-baseline="middle">600</text></g>
+        <g transform="rotate(120 300 260)"><text x="300" y="122" text-anchor="middle" dominant-baseline="middle">700</text></g>
+      </g>
+
+      <!-- Units -->
+      <text class="unit" x="300" y="315" text-anchor="middle">RPM ×10</text>
+
+      <!-- Tach needle at ~350 (mid) => angle = -120 + (350/700)*240 = 0° -->
+      <!-- <g id="tach-needle" transform="rotate(0 300 260)">
+        <circle class="needle-base" cx="300" cy="260" r="18"/>
+        <polygon class="needle" points="300,260 294,260 300,100 306,260"/>
+        <circle class="center-cap" cx="300" cy="260" r="12"/>
+        <circle class="center-dot" cx="300" cy="260" r="4"/>
+      </g> -->
+      
+    </g>
+
+    <!-- Speedometer -->
+    <g id="speedo" data-max="200" transform="translate(-50,30) scale(0.7, 0.7)">
+      <g id="speed-geo">
+        <circle class="bezel" cx="700" cy="260" r="200"/>
+        <circle class="dial-face" cx="700" cy="260" r="180"/>
+        <circle class="ring" cx="700" cy="260" r="170"/>
+      </g>
+
+      <!-- Major ticks (0..200 step 20): angles = -120 + 1.2*v -->
+      <g id="speed-ticks-major">
+        <g transform="rotate(-120 700 260)"><line class="tick-major" x1="700" y1="108" x2="700" y2="90"/></g> <!-- 0 -->
+        <g transform="rotate(-96 700 260)"><line class="tick-major" x1="700" y1="108" x2="700" y2="90"/></g>  <!-- 20 -->
+        <g transform="rotate(-72 700 260)"><line class="tick-major" x1="700" y1="108" x2="700" y2="90"/></g>  <!-- 40 -->
+        <g transform="rotate(-48 700 260)"><line class="tick-major" x1="700" y1="108" x2="700" y2="90"/></g>  <!-- 60 -->
+        <g transform="rotate(-24 700 260)"><line class="tick-major" x1="700" y1="108" x2="700" y2="90"/></g>  <!-- 80 -->
+        <g transform="rotate(0 700 260)"><line class="tick-major" x1="700" y1="108" x2="700" y2="90"/></g>   <!-- 100 -->
+        <g transform="rotate(24 700 260)"><line class="tick-major" x1="700" y1="108" x2="700" y2="90"/></g>  <!-- 120 -->
+        <g transform="rotate(48 700 260)"><line class="tick-major" x1="700" y1="108" x2="700" y2="90"/></g>  <!-- 140 -->
+        <g transform="rotate(72 700 260)"><line class="tick-major" x1="700" y1="108" x2="700" y2="90"/></g>  <!-- 160 -->
+        <g transform="rotate(96 700 260)"><line class="tick-major" x1="700" y1="108" x2="700" y2="90"/></g>  <!-- 180 -->
+        <g transform="rotate(120 700 260)"><line class="tick-major" x1="700" y1="108" x2="700" y2="90"/></g> <!-- 200 -->
+      </g>
+
+      <!-- Minor ticks at 10,30,50,...190 angles: -108,-84,-60,-36,-12,12,36,60,84,108 -->
+      <g id="speed-ticks-minor">
+        <g transform="rotate(-108 700 260)"><line class="tick-minor" x1="700" y1="110" x2="700" y2="100"/></g>
+        <g transform="rotate(-84 700 260)"><line class="tick-minor" x1="700" y1="110" x2="700" y2="100"/></g>
+        <g transform="rotate(-60 700 260)"><line class="tick-minor" x1="700" y1="110" x2="700" y2="100"/></g>
+        <g transform="rotate(-36 700 260)"><line class="tick-minor" x1="700" y1="110" x2="700" y2="100"/></g>
+        <g transform="rotate(-12 700 260)"><line class="tick-minor" x1="700" y1="110" x2="700" y2="100"/></g>
+        <g transform="rotate(12 700 260)"><line class="tick-minor" x1="700" y1="110" x2="700" y2="100"/></g>
+        <g transform="rotate(36 700 260)"><line class="tick-minor" x1="700" y1="110" x2="700" y2="100"/></g>
+        <g transform="rotate(60 700 260)"><line class="tick-minor" x1="700" y1="110" x2="700" y2="100"/></g>
+        <g transform="rotate(84 700 260)"><line class="tick-minor" x1="700" y1="110" x2="700" y2="100"/></g>
+        <g transform="rotate(108 700 260)"><line class="tick-minor" x1="700" y1="110" x2="700" y2="100"/></g>
+      </g>
+
+      <!-- Labels at major ticks, radius ~138 -->
+      <g id="speed-labels" font-size="16" class="label">
+        <g transform="rotate(-120 700 260)"><text x="700" y="122" text-anchor="middle" dominant-baseline="middle">0</text></g>
+        <g transform="rotate(-96 700 260)"><text x="700" y="122" text-anchor="middle" dominant-baseline="middle">20</text></g>
+        <g transform="rotate(-72 700 260)"><text x="700" y="122" text-anchor="middle" dominant-baseline="middle">40</text></g>
+        <g transform="rotate(-48 700 260)"><text x="700" y="122" text-anchor="middle" dominant-baseline="middle">60</text></g>
+        <g transform="rotate(-24 700 260)"><text x="700" y="122" text-anchor="middle" dominant-baseline="middle">80</text></g>
+        <g transform="rotate(0 700 260)"><text x="700" y="122" text-anchor="middle" dominant-baseline="middle">100</text></g>
+        <g transform="rotate(24 700 260)"><text x="700" y="122" text-anchor="middle" dominant-baseline="middle">120</text></g>
+        <g transform="rotate(48 700 260)"><text x="700" y="122" text-anchor="middle" dominant-baseline="middle">140</text></g>
+        <g transform="rotate(72 700 260)"><text x="700" y="122" text-anchor="middle" dominant-baseline="middle">160</text></g>
+        <g transform="rotate(96 700 260)"><text x="700" y="122" text-anchor="middle" dominant-baseline="middle">180</text></g>
+        <g transform="rotate(120 700 260)"><text x="700" y="122" text-anchor="middle" dominant-baseline="middle">200</text></g>
+      </g>
+
+      <!-- Units -->
+      <text class="unit" x="700" y="315" text-anchor="middle">km/h</text>
+
+      <!-- Speed needle at ~80 km/h => angle = -24° -->
+      <!-- <g id="speed-needle" transform="rotate(-24 700 260)">
+        <circle class="needle-base" cx="700" cy="260" r="18"/>
+        <polygon class="needle" points="700,260 694,260 700,100 706,260"/>
+        <circle class="center-cap" cx="700" cy="260" r="12"/>
+        <circle class="center-dot" cx="700" cy="260" r="4"/>
+      </g> -->
+    </g>
+  </g>
+</svg>

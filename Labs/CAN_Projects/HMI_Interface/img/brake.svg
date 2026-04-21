@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Brake Force – Dark Mode (6 LEDs)
+  Features:
+    • Dark glassy panel with inner shadow
+    • Neon glow LEDs (green → red)
+    • Smooth transitions and numeric readout
+  Usage:
+    • Set data-level="0..6" on <svg>
+    • Or toggle classes: add class="on" to led1..ledN
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 180" width="560" height="180" role="img" data-level="3">
+  <title>Brake Force – 6 LED Indicator (Dark Mode)</title>
+  <desc>Six visual LEDs indicating braking force from low (green) to high (red), on a dark panel.</desc>
+
+  <!-- ====== DEFINITIONS ====== -->
+  <defs>
+    <!-- Panel gradient -->
+    <linearGradient id="panelGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"  stop-color="#0c0f16"/>
+      <stop offset="100%" stop-color="#0a0d14"/>
+    </linearGradient>
+
+    <!-- Inner shadow for panel -->
+    <filter id="innerShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feOffset dx="0" dy="0"/>
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="arithmetic" k2="1" k3="-1" result="shadowDiff"/>
+      <feColorMatrix in="shadowDiff" type="matrix" values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0   0 0 0 .9 0"/>
+    </filter>
+
+    <!-- Soft outer glow (uses source color) -->
+    <filter id="softGlow" x="-150%" y="-150%" width="400%" height="400%">
+      <feGaussianBlur stdDeviation="8" result="b1"/>
+      <feGaussianBlur stdDeviation="16" in="b1" result="b2"/>
+      <feMerge>
+        <feMergeNode in="b2"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Glass highlight (white radial) -->
+    <radialGradient id="glassShine" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity=".55"/>
+      <stop offset="55%" stop-color="#ffffff" stop-opacity=".08"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+
+    <style>
+      :root {
+        --panelStroke: #11161f;
+        --panelEdge:   #0f1420;
+        --text:        #d2dae6;
+        --muted:       #8b98a7;
+        --tick:        #2a3340;
+        --led-off:     #171b24;
+        --rim:         #0b1018;
+        --glass:       #ffffff;
+      }
+
+      svg { color-scheme: dark; background:#080b11; }
+
+      /* Typography */
+      .label { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; fill: var(--text); }
+      .title { font-size: 16px; letter-spacing: 2px; fill: #cbd5e1; opacity:.92; }
+      .readout { font-variant-numeric: tabular-nums; font-weight: 600; }
+
+      /* Panel */
+      .panel { fill: url(#panelGrad); stroke: var(--panelStroke); stroke-width: 1.5; filter: url(#innerShadow); }
+
+      /* LEDs */
+      .led { transition: opacity .25s ease, transform .12s ease; transform-origin: center; }
+      .led .halo   { opacity: 0; filter: url(#softGlow); transition: opacity .25s ease; }
+      .led .bulb   { fill: var(--led-off); stroke: var(--rim); stroke-width: 1.5; }
+      .led .ring   { fill: none; stroke: #0e1522; stroke-width: 3; opacity: .55; }
+      .led .shine  { fill: url(#glassShine); opacity: .35; mix-blend-mode: screen; }
+      .led.on .halo  { opacity: .92; }
+      .led.on .bulb  { fill: var(--col); }
+      .led:hover     { transform: scale(1.03); }
+
+      /* Ticks under LEDs */
+      .tick { stroke: var(--tick); stroke-width: 2; stroke-linecap: round; opacity: .9; }
+
+      /* Readout panel (right side) */
+      .readout-box { fill: #0b0f17; stroke: #17202f; stroke-width: 1; rx: 10; }
+      .readout-val { font-size: 28px; fill: #e5edf9; }
+      .readout-sub { font-size: 11px; fill: #97a6ba; letter-spacing: 1px; }
+
+      /* Smooth color/opacity transitions */
+      .led .bulb, .led .halo { transition: fill .2s ease, opacity .25s ease; }
+    </style>
+  </defs>
+
+  <!-- ====== PANEL ====== -->
+  <rect class="panel" x="16" y="20" width="528" height="140" rx="16"/>
+
+  <!-- Header -->
+  <text class="label title" x="40" y="48">BRAKE&nbsp;FORCE</text>
+
+  <!-- ====== LED STRIP ====== -->
+  <!-- Positions (cx): 100, 160, 220, 280, 340, 400 -->
+  <g id="leds" transform="translate(0,10)" aria-label="Brake force level from 1 to 6">
+    <!-- LED 1 (Green) -->
+    <g id="led1" class="led" style="--col:#4CAF50">
+      <circle class="halo" cx="100" cy="98" r="20"/>
+      <circle class="bulb" cx="100" cy="98" r="16"/>
+      <circle class="ring" cx="100" cy="98" r="17.5"/>
+      <ellipse class="shine" cx="95" cy="92" rx="10" ry="8"/>
+    </g>
+    <!-- LED 2 -->
+    <g id="led2" class="led" style="--col:#8BC34A">
+      <circle class="halo" cx="160" cy="98" r="20"/>
+      <circle class="bulb" cx="160" cy="98" r="16"/>
+      <circle class="ring" cx="160" cy="98" r="17.5"/>
+      <ellipse class="shine" cx="155" cy="92" rx="10" ry="8"/>
+    </g>
+    <!-- LED 3 -->
+    <g id="led3" class="led" style="--col:#CDDC39">
+      <circle class="halo" cx="220" cy="98" r="20"/>
+      <circle class="bulb" cx="220" cy="98" r="16"/>
+      <circle class="ring" cx="220" cy="98" r="17.5"/>
+      <ellipse class="shine" cx="215" cy="92" rx="10" ry="8"/>
+    </g>
+    <!-- LED 4 -->
+    <g id="led4" class="led" style="--col:#FFC107">
+      <circle class="halo" cx="280" cy="98" r="20"/>
+      <circle class="bulb" cx="280" cy="98" r="16"/>
+      <circle class="ring" cx="280" cy="98" r="17.5"/>
+      <ellipse class="shine" cx="275" cy="92" rx="10" ry="8"/>
+    </g>
+    <!-- LED 5 -->
+    <g id="led5" class="led" style="--col:#FF9800">
+      <circle class="halo" cx="340" cy="98" r="20"/>
+      <circle class="bulb" cx="340" cy="98" r="16"/>
+      <circle class="ring" cx="340" cy="98" r="17.5"/>
+      <ellipse class="shine" cx="335" cy="92" rx="10" ry="8"/>
+    </g>
+    <!-- LED 6 (Red) -->
+    <g id="led6" class="led" style="--col:#F44336">
+      <circle class="halo" cx="400" cy="98" r="20"/>
+      <circle class="bulb" cx="400" cy="98" r="16"/>
+      <circle class="ring" cx="400" cy="98" r="17.5"/>
+      <ellipse class="shine" cx="395" cy="92" rx="10" ry="8"/>
+    </g>
+
+    <!-- Ticks under LEDs -->
+    <g stroke-width="2">
+      <line class="tick" x1="100" y1="122" x2="100" y2="126"/>
+      <line class="tick" x1="160" y1="122" x2="160" y2="126"/>
+      <line class="tick" x1="220" y1="122" x2="220" y2="126"/>
+      <line class="tick" x1="280" y1="122" x2="280" y2="126"/>
+      <line class="tick" x1="340" y1="122" x2="340" y2="126"/>
+      <line class="tick" x1="400" y1="122" x2="400" y2="126"/>
+    </g>
+  </g>
+
+  <!-- ====== READOUT (RIGHT) ====== -->
+  <g transform="translate(438,48)">
+    <rect class="readout-box" x="0" y="0" width="90" height="72" rx="10"/>
+    <text class="label readout readout-val" id="readoutValue" x="45" y="40" text-anchor="middle">3</text>
+    <text class="label readout-sub" x="45" y="58" text-anchor="middle">/ 6</text>
+  </g>
+</svg>

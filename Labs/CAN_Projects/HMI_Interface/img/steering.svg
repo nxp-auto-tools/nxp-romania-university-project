@@ -1,0 +1,65 @@
+<!-- Save as: steering-and-wheels-fixed.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 360" width="800" height="480" role="img" aria-labelledby="title desc">
+  <title id="title">Steering and Wheel Rotation Demo (Fixed)</title>
+  <desc id="desc">A steering wheel turns left/right; front wheels steer in sync while all wheels spin continuously. Uses nested groups to avoid transform conflicts.</desc>
+
+  <style>
+    .car-body { fill:#e9eef3; stroke:#334155; stroke-width:3; }
+    .tire { fill:#222; stroke:#000; stroke-width:2; }
+    .rim { fill:#bbb; stroke:#888; stroke-width:1.5; }
+    .spoke { stroke:#777; stroke-width:2.2; stroke-linecap:round; }
+    .label { font: 12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; fill:#334155; }
+    .steering { fill:#1f2937; stroke:#111827; stroke-width:2.5; }
+    .steering-spoke { stroke:#fafafa; stroke-width:4; stroke-linecap:round; }
+  </style>
+
+  <!-- PARAMETERS -->
+  <!-- Steering amplitude: ±30° (edit values below) -->
+  <!-- Steering cycle duration: 3s -->
+  <!-- Wheel spin duration: 0.9s -->
+
+  <!-- Background -->
+  <rect x="0" y="0" width="600" height="360" fill="#f8fafc"/>
+
+  <!-- Car body (abstract) -->
+  <g id="car">
+    <rect class="car-body" x="150" y="120" width="300" height="140" rx="16" />
+    <text x="300" y="200" text-anchor="middle" class="label">Car</text>
+  </g>
+
+  <!-- ===== WHEEL SHAPE (reusable) ===== -->
+  <defs>
+    <g id="wheelShape">
+      <!-- Tire -->
+      <circle r="28" class="tire"/>
+      <!-- Rim -->
+      <circle r="18" class="rim"/>
+      <circle r="4" fill="#666"/>
+      <!-- Spokes -->
+      <g>
+        <line class="spoke" x1="0" y1="-18" x2="0" y2="-7"/>
+        <line class="spoke" x1="0" y1="7" x2="0" y2="18"/>
+        <line class="spoke" x1="-18" y1="0" x2="-7" y2="0"/>
+        <line class="spoke" x1="7" y1="0" x2="18" y2="0"/>
+        <line class="spoke" x1="-13" y1="-13" x2="-5" y2="-5"/>
+        <line class="spoke" x1="5" y1="5" x2="13" y2="13"/>
+        <line class="spoke" x1="13" y1="-13" x2="5" y2="-5"/>
+        <line class="spoke" x1="-13" y1="13" x2="-5" y2="5"/>
+      </g>
+    </g>
+  </defs>
+
+  <!-- ===== WHEELS (positions) ===== -->
+  <!-- Rear Left (RL): 210, 240 -->
+  <!-- Rear Right (RR): 390, 240 -->
+  <!-- Front Left (FL): 210, 160 -->
+  <!-- Front Right (FR): 390, 160 -->
+
+  <!-- Rear Left - spins only (nested: translate -> spin) -->
+  <g transform="translate(210,240)">
+    <g class="spin">
+      #wheelShape
+      <animateTransform attributeName="transform" type="rotate"
+        from="0" to="360" dur="0.9s" repeatCount="indefinite" />
+    </g>
+  </g>
