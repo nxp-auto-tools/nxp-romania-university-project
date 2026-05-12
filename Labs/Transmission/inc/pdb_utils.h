@@ -1,0 +1,31 @@
+/*
+ * Copyright 2025 NXP
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#ifndef PDB_UTILS_H
+#define PDB_UTILS_H
+
+/* Include files ------------------------------------------------------------------ */
+#include "sdk_project_config.h"
+
+/* Macro -------------------------------------------------------------------------- */
+/* timeout for PDB operations (microseconds) */
+#define PDLY_TIMEOUT    (10000UL)
+
+typedef struct {
+    uint8_t instance;
+    const pdb_timer_config_t* timerConfig;
+    uint32_t pdlyTimeout_microS;
+    uint8_t chn;
+    uint8_t preChn;
+    const pdb_adc_pretrigger_config_t* adcTrigConfig;
+}pdb_instanceConfig_t;
+
+/* Function prototypes ------------------------------------------------------------ */
+/* @brief: Initializes PDB to generate periodic interrupts for ADC (Analog to Digital Converter) triggering. */
+void v_pdbInit(pdb_instanceConfig_t* pdbInstance);
+/* @brief: Calculate the values to be used by PDB to generate a interrupt at a specific timeout. */
+bool b_calculateIntValue(const pdb_timer_config_t *pdbConfig, uint32_t uSec,uint16_t *intVal);
+
+#endif /* PDB_UTILS_H */

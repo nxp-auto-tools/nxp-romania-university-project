@@ -22,44 +22,46 @@ functionalGroups:
 /*******************************************************************************
  * Included files 
  ******************************************************************************/
-#include "peripherals_pdb_1.h"
+#include "peripherals_ADC_1.h"
 
 /*******************************************************************************
- * pdb_1 initialization code
+ * ADC_1 initialization code
  ******************************************************************************/
 /* clang-format off */
 /* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 instance:
-- name: 'pdb_1'
-- type: 'pdb'
+- name: 'ADC_1'
+- type: 'adc_config'
 - mode: 'general'
 - custom_name_enabled: 'true'
-- type_id: 'pdb'
+- type_id: 'adc'
 - functional_group: 'BOARD_InitPeripherals'
-- peripheral: 'PDB_1'
+- peripheral: 'ADC_1'
 - config_sets:
-  - pdb_driver:
-    - adcTrigCfgs:
+  - adc:
+    - adcConverterCfg:
       - 0:
-        - name: 'pdb_1_adcTrigConfig0'
-        - readOnly: 'true'
-        - adcPreTriggerIdx: '0'
-        - preTriggerEnable: 'true'
-        - preTriggerOutputEnable: 'true'
-        - preTriggerBackToBackEnable: 'false'
-    - pdbCfgs:
-      - 0:
-        - name: 'pdb_1_timerConfig0'
-        - readOnly: 'true'
-        - loadValueMode: 'PDB_LOAD_VAL_IMMEDIATELY'
-        - seqErrIntEnable: 'false'
-        - clkPreDiv: 'PDB_CLK_PREDIV_BY_128'
-        - clkPreMultFactor: 'PDB_CLK_PREMULT_FACT_AS_10'
-        - triggerInput: 'PDB_SOFTWARE_TRIGGER'
-        - continuousModeEnable: 'false'
+        - name: 'adc_1_ConvConfig0'
+        - readonly: 'true'
+        - clockDivide: 'ADC_CLK_DIVIDE_4'
+        - sampleTime: '255'
+        - resolution: 'ADC_RESOLUTION_12BIT'
+        - inputClock: 'ADC_CLK_ALT_1'
+        - trigger: 'ADC_TRIGGER_HARDWARE'
+        - pretriggerSel: 'ADC_PRETRIGGER_SEL_PDB'
+        - triggerSel: 'ADC_TRIGGER_SEL_PDB'
         - dmaEnable: 'false'
-        - intEnable: 'false'
-        - instanceBackToBackEnable: 'false'
+        - voltageRef: 'ADC_VOLTAGEREF_VREF'
+        - continuousConvEnable: 'false'
+        - supplyMonitoringEnable: 'false'
+    - adcCompareCfg: []
+    - adcAverageCfg: []
+    - adcChanCfg:
+      - 0:
+        - name: 'adc_1_ChnConfig0'
+        - readonly: 'false'
+        - interruptEnable: 'true'
+        - channel: 'ADC_INPUTCHAN_EXT12'
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
 
@@ -72,27 +74,23 @@ instance:
  *
  */
 
-/*! @brief ADC pre-trigger configurations */
-const pdb_adc_pretrigger_config_t pdb_1_adcTrigConfig0 = {
-    .adcPreTriggerIdx = 0U,
-    .preTriggerEnable = true,
-    .preTriggerOutputEnable = true,
-    .preTriggerBackToBackEnable = false
+const adc_converter_config_t adc_1_ConvConfig0 = {
+  .clockDivide = ADC_CLK_DIVIDE_4,
+  .sampleTime = 255U,
+  .resolution = ADC_RESOLUTION_12BIT,
+  .inputClock = ADC_CLK_ALT_1,
+  .trigger = ADC_TRIGGER_HARDWARE,
+  .pretriggerSel = ADC_PRETRIGGER_SEL_PDB,
+  .triggerSel = ADC_TRIGGER_SEL_PDB,
+  .dmaEnable = false,
+  .voltageRef = ADC_VOLTAGEREF_VREF,
+  .continuousConvEnable = false,
+  .supplyMonitoringEnable = false
 };
 
-
-/*! @brief PDB timer configurations */
-const pdb_timer_config_t pdb_1_timerConfig0 = {
-    .loadValueMode = PDB_LOAD_VAL_IMMEDIATELY,
-    .seqErrIntEnable = false,
-    .clkPreDiv = PDB_CLK_PREDIV_BY_128,
-    .clkPreMultFactor = PDB_CLK_PREMULT_FACT_AS_10,
-    .triggerInput = PDB_SOFTWARE_TRIGGER,
-    .continuousModeEnable = false,
-    .dmaEnable = false,
-    .intEnable = false,
-    .instanceBackToBackEnable = false,
+adc_chan_config_t adc_1_ChnConfig0 = {
+  .interruptEnable = true,
+  .channel = ADC_INPUTCHAN_EXT12
 };
-
 
 

@@ -198,11 +198,6 @@
 			<locationURI>s32sdk_s32k1xx_rtm_401/platform/drivers/src/clock/doxygen/clock_manager.dox</locationURI>
 		</link>
 		<link>
-			<name>doc/SDK/platform/drivers/src/edma/doxygen/edma_driver.dox</name>
-			<type>1</type>
-			<locationURI>s32sdk_s32k1xx_rtm_401/platform/drivers/src/edma/doxygen/edma_driver.dox</locationURI>
-		</link>
-		<link>
 			<name>doc/SDK/platform/drivers/src/ftm/doxygen/ftm_driver.dox</name>
 			<type>1</type>
 			<locationURI>s32sdk_s32k1xx_rtm_401/platform/drivers/src/ftm/doxygen/ftm_driver.dox</locationURI>
@@ -216,21 +211,6 @@
 			<name>doc/SDK/platform/drivers/src/interrupt/doxygen/interrupt.dox</name>
 			<type>1</type>
 			<locationURI>s32sdk_s32k1xx_rtm_401/platform/drivers/src/interrupt/doxygen/interrupt.dox</locationURI>
-		</link>
-		<link>
-			<name>doc/SDK/platform/drivers/src/lpit/doxygen/lpit.dox</name>
-			<type>1</type>
-			<locationURI>s32sdk_s32k1xx_rtm_401/platform/drivers/src/lpit/doxygen/lpit.dox</locationURI>
-		</link>
-		<link>
-			<name>doc/SDK/platform/drivers/src/lpit/doxygen/lpit_driver.dox</name>
-			<type>1</type>
-			<locationURI>s32sdk_s32k1xx_rtm_401/platform/drivers/src/lpit/doxygen/lpit_driver.dox</locationURI>
-		</link>
-		<link>
-			<name>doc/SDK/platform/drivers/src/lpuart/doxygen/lpuart_driver.dox</name>
-			<type>1</type>
-			<locationURI>s32sdk_s32k1xx_rtm_401/platform/drivers/src/lpuart/doxygen/lpuart_driver.dox</locationURI>
 		</link>
 		<link>
 			<name>doc/SDK/platform/drivers/src/pdb/doxygen/pdb.dox</name>

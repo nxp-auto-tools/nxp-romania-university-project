@@ -1,0 +1,76 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0" version="28.1.0">
+  <diagram name="Page-1" id="5yqtzpCVcHmnKQ8ITNJK">
+    <mxGraphModel dx="1896" dy="1171" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="DDs4-KorSj6YYRLDIqKd-1" value="&lt;font style=&quot;font-size: 19px;&quot;&gt;&lt;b&gt;Development Board K144&lt;/b&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;direction=south;align=center;labelPosition=center;verticalLabelPosition=middle;verticalAlign=top;fillColor=#cce5ff;strokeColor=#36393d;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="70" y="120" width="290" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="DDs4-KorSj6YYRLDIqKd-2" value="&lt;font style=&quot;font-size: 21px;&quot;&gt;&lt;b&gt;PCB&lt;/b&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;direction=south;align=center;labelPosition=center;verticalLabelPosition=middle;verticalAlign=top;fillColor=#ffcc99;strokeColor=#36393d;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="760" y="120" width="290" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="DDs4-KorSj6YYRLDIqKd-3" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.134;exitY=1.008;exitDx=0;exitDy=0;exitPerimeter=0;strokeWidth=3;entryX=0.134;entryY=0.003;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=#FF8000;" edge="1" parent="1" source="DDs4-KorSj6YYRLDIqKd-2" target="DDs4-KorSj6YYRLDIqKd-1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="758.8400000000001" y="194.50000000000014" as="sourcePoint" />
+            <mxPoint x="359.99999999999994" y="194.49999999999991" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DDs4-KorSj6YYRLDIqKd-4" value="&lt;b&gt;&lt;font style=&quot;font-size: 16px;&quot;&gt;Pot Out&lt;/font&gt;&lt;/b&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="DDs4-KorSj6YYRLDIqKd-3">
+          <mxGeometry x="0.0637" y="-3" relative="1" as="geometry">
+            <mxPoint x="14" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DDs4-KorSj6YYRLDIqKd-5" value="&lt;b&gt;&lt;font style=&quot;font-size: 19px;&quot;&gt;Potentiometer&amp;nbsp;&lt;/font&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cce5ff;strokeColor=#36393d;" vertex="1" parent="1">
+          <mxGeometry x="780" y="160" width="250" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="DDs4-KorSj6YYRLDIqKd-6" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.367;exitY=-0.009;exitDx=0;exitDy=0;exitPerimeter=0;strokeWidth=3;entryX=0.372;entryY=1.003;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=#66B2FF;fillColor=#cce5ff;" edge="1" parent="1" source="DDs4-KorSj6YYRLDIqKd-1" target="DDs4-KorSj6YYRLDIqKd-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="361" y="314.5" as="sourcePoint" />
+            <mxPoint x="760" y="314.5" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DDs4-KorSj6YYRLDIqKd-7" value="&lt;span style=&quot;font-size: 16px;&quot;&gt;&lt;b&gt;PWM Servo&lt;/b&gt;&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="DDs4-KorSj6YYRLDIqKd-6">
+          <mxGeometry x="0.0637" y="-3" relative="1" as="geometry">
+            <mxPoint x="-14" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DDs4-KorSj6YYRLDIqKd-8" value="&lt;b&gt;&lt;font style=&quot;font-size: 19px;&quot;&gt;Servo Motor&lt;/font&gt;&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cce5ff;strokeColor=#36393d;" vertex="1" parent="1">
+          <mxGeometry x="780" y="280" width="250" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="DDs4-KorSj6YYRLDIqKd-9" value="&lt;span style=&quot;font-size: 19px;&quot;&gt;&lt;b&gt;DC Motor&amp;nbsp;&lt;/b&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cce5ff;strokeColor=#36393d;" vertex="1" parent="1">
+          <mxGeometry x="780" y="414" width="250" height="146" as="geometry" />
+        </mxCell>
+        <mxCell id="DDs4-KorSj6YYRLDIqKd-10" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.627;exitY=0.003;exitDx=0;exitDy=0;exitPerimeter=0;strokeWidth=3;strokeColor=#66B2FF;fillColor=#cce5ff;entryX=0.629;entryY=0.991;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="DDs4-KorSj6YYRLDIqKd-1" target="DDs4-KorSj6YYRLDIqKd-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="320" y="470" as="sourcePoint" />
+            <mxPoint x="726" y="470" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DDs4-KorSj6YYRLDIqKd-11" value="&lt;span style=&quot;font-size: 16px;&quot;&gt;&lt;b&gt;PWM DC&lt;/b&gt;&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="DDs4-KorSj6YYRLDIqKd-10">
+          <mxGeometry x="0.0637" y="-3" relative="1" as="geometry">
+            <mxPoint x="-14" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DDs4-KorSj6YYRLDIqKd-12" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.769;exitY=0.003;exitDx=0;exitDy=0;exitPerimeter=0;strokeWidth=3;strokeColor=#66B2FF;fillColor=#cce5ff;entryX=0.771;entryY=0.999;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="DDs4-KorSj6YYRLDIqKd-1" target="DDs4-KorSj6YYRLDIqKd-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="356" y="510" as="sourcePoint" />
+            <mxPoint x="740" y="520" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DDs4-KorSj6YYRLDIqKd-13" value="&lt;span style=&quot;font-size: 16px;&quot;&gt;&lt;b&gt;Direction&lt;/b&gt;&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="DDs4-KorSj6YYRLDIqKd-12">
+          <mxGeometry x="0.0637" y="-3" relative="1" as="geometry">
+            <mxPoint x="-14" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DDs4-KorSj6YYRLDIqKd-14" value="" style="swimlane;startSize=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="1040" height="600" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -6,7 +6,7 @@
 /* clang-format off */
 /* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!GlobalInfo
-product: Peripherals v14.0
+product: Peripherals v11.0
 processor: S32K144
 package_id: S32K144_LQFP100
 mcu_data: s32sdk_s32k1xx_rtm_401
@@ -106,7 +106,7 @@ instance:
                 - ftmpwmIndptName: 'flexTimer_pwm_motor_IndependentChannelConfig1'
                 - ftmPwmIndptHwChnId: '1'
                 - polarity: 'FTM_POLARITY_LOW'
-                - uDutyCyclePercent: '0x4000'
+                - uDutyCyclePercent: '0'
                 - enableExternalTrigger: 'false'
                 - safeState: 'FTM_LOW_STATE'
                 - enableSecondChannelOutput: 'false'
@@ -208,7 +208,7 @@ ftm_independent_ch_param_t flexTimer_pwm_motor_IndependentChannelsConfig[3] =
     {
         1, /* Hardware channel Id */
         FTM_POLARITY_LOW, /* Polarity of the PWM signal */
-        16384U, /* Duty cycle percent 0-0x8000 */
+        0U, /* Duty cycle percent 0-0x8000 */
         false, /* External Trigger */
         FTM_LOW_STATE, /* Safe state of the PWM channel when faults are detected */
         false, /* Enabled/disabled the channel (n+1) output */

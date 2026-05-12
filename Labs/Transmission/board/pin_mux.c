@@ -2,12 +2,11 @@
 /*
  * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!GlobalInfo
-product: Pins v15.0
+product: Pins v11.0
 processor: S32K144
 package_id: S32K144_LQFP100
 mcu_data: s32sdk_s32k1xx_rtm_401
 processor_version: 0.0.0
-external_user_signals: {}
 pin_labels:
 - {pin_num: '22', pin_signal: PTD15, label: MOTOR_IN, identifier: LED_RED_PWMLED_RED_PWM;LED_RED_PWM}
 - {pin_num: '21', pin_signal: PTD16, label: MOTOR_DIR, identifier: LED_GREEN_PWM}

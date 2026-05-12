@@ -3,8 +3,8 @@
  * will be overwritten if the respective S32 Config Tools is used to update this file.
  **********************************************************************************************************************/
 
-#ifndef pdb_1_H
-#define pdb_1_H
+#ifndef ADC_1_H
+#define ADC_1_H
 
 /**
  * @page misra_violations MISRA-C:2012 violations
@@ -17,21 +17,27 @@
 /*******************************************************************************
  * Included files 
  ******************************************************************************/
-#include "pdb_driver.h"
+#include "adc_driver.h"
+
+/*******************************************************************************
+ * Definitions 
+ ******************************************************************************/
+
+/*Device instance number */
+#define INST_ADC_1  (1U)
 
 /*******************************************************************************
  * Global variables 
  ******************************************************************************/
 
-/*! @brief Device instance number */
-#define INST_PDB_1 1U
+/* User configurations */
 
-/*! @brief ADC pre-trigger configuration declarations */
-extern const pdb_adc_pretrigger_config_t pdb_1_adcTrigConfig0;
+/* Converter configuration 0 */
+extern const adc_converter_config_t adc_1_ConvConfig0;
 
-/*! @brief PDB timer configuration declarations */
-extern const pdb_timer_config_t pdb_1_timerConfig0;
-
+/* Channel configuration 0 */
+extern adc_chan_config_t adc_1_ChnConfig0;
 
 
-#endif /* pdb_1_H */
+
+#endif /* ADC_1_H */
