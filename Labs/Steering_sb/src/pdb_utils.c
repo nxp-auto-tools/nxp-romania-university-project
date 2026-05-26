@@ -16,33 +16,25 @@
  * @return type: void
  *
  */
-void v_pdbInit(pdb_instanceConfig_t *pdbInstance) {
+void v_pdbInit(pdb_instanceConfig_t* pdbInstance){
     uint16_t ui16delayValue = 0;
 
     /* calculate the delay value for the PDB timer interrupt */
-    if (!b_calculateIntValue(pdbInstance->timerConfig,
-                             pdbInstance->pdlyTimeout_microS,
-                             &ui16delayValue)) {
+    if (!b_calculateIntValue(pdbInstance->timerConfig, pdbInstance->pdlyTimeout_microS,&ui16delayValue)) {
         /* if calculation fails, stop the program */
         while (1);
     }
 
     /* set up the PDB (Programmable Delay Block) */
-    PDB_DRV_Init(pdbInstance->instance, pdbInstance->timerConfig);
+    PDB_DRV_Init(pdbInstance->instance,pdbInstance->timerConfig);
     /* enable the PDB module */
     PDB_DRV_Enable(pdbInstance->instance);
     /* configure ADC (Analog to Digital Converter) trigger settings */
-    PDB_DRV_ConfigAdcPreTrigger(pdbInstance->instance,
-                                pdbInstance->chn,
-                                pdbInstance->adcTrigConfig);
+    PDB_DRV_ConfigAdcPreTrigger(pdbInstance->instance, pdbInstance->chn, pdbInstance->adcTrigConfig);
     /* set the timer delay value */
-    PDB_DRV_SetTimerModulusValue(pdbInstance->instance,
-                                 (uint32_t) ui16delayValue);
+    PDB_DRV_SetTimerModulusValue(pdbInstance->instance, (uint32_t) ui16delayValue);
     /* set the delay for ADC (Analog to Digital Converter) trigger */
-    PDB_DRV_SetAdcPreTriggerDelayValue(pdbInstance->instance,
-                                       pdbInstance->chn,
-                                       pdbInstance->preChn,
-                                       (uint32_t) ui16delayValue);
+    PDB_DRV_SetAdcPreTriggerDelayValue(pdbInstance->instance, pdbInstance->chn, pdbInstance->preChn, (uint32_t)ui16delayValue);
     /* load all configured values into the PDB */
     PDB_DRV_LoadValuesCmd(pdbInstance->instance);
     /* start the PDB using a software trigger */
@@ -60,9 +52,7 @@ void v_pdbInit(pdb_instanceConfig_t *pdbInstance) {
  * @return:          returns true if the interrupt period can be achieved, false if not
  * @return type:     bool
  */
-bool b_calculateIntValue(const pdb_timer_config_t *pdbConfig,
-                         uint32_t uSec,
-                         uint16_t *intVal) {
+bool b_calculateIntValue(const pdb_timer_config_t *pdbConfig, uint32_t uSec, uint16_t *intVal) {
     uint32_t ui32Temp = 0U;
     uint8_t ui8PdbPrescaler = (1U << pdbConfig->clkPreDiv);
     uint8_t ui8PdbPrescalerMult = 0U;
@@ -94,12 +84,16 @@ bool b_calculateIntValue(const pdb_timer_config_t *pdbConfig,
     ui32PdbFrequency /= 1000000U;
 
     /* calculate the interrupt value based on time and clock settings */
-    ui32Temp = (ui32PdbFrequency * uSec)
-        / (ui8PdbPrescaler * ui8PdbPrescalerMult);
+    ui32Temp = (ui32PdbFrequency * uSec) / (ui8PdbPrescaler * ui8PdbPrescalerMult);
 
-    /*
-     * TODO: check if the result(bResultValid) fits in a 16-bit value
-     */
+    /* check if the result fits in a 16-bit value */
+    if ((ui32Temp == 0U) || (ui32Temp >= (1U << 16))) {
+        bResultValid = false;
+        (*intVal) = 0U;
+    } else {
+        bResultValid = true;
+        (*intVal) = (uint16_t) ui32Temp;
+    }
 
     return bResultValid;
 }

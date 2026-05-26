@@ -54,6 +54,8 @@
                         <pin_feature name="direction" value="OUTPUT"/>
                      </pin_features>
                   </pin>
+                  <pin peripheral="CAN0" signal="rxd, rxd" pin_num="9" pin_signal="PTE4"/>
+                  <pin peripheral="CAN0" signal="txd, txd" pin_num="8" pin_signal="PTE5"/>
                </pins>
             </function>
          </functions_list>
@@ -280,8 +282,8 @@
             </dependency>
          </dependencies>
          <generated_project_files>
-            <file path="board/peripherals_adc_1.c" update_enabled="true"/>
-            <file path="board/peripherals_adc_1.h" update_enabled="true"/>
+            <file path="board/peripherals_adc_1.c" update_enabled="false"/>
+            <file path="board/peripherals_adc_1.h" update_enabled="false"/>
             <file path="board/peripherals_flexTimer_pwm_servo.c" update_enabled="false"/>
             <file path="board/peripherals_flexTimer_pwm_servo.h" update_enabled="false"/>
             <file path="board/peripherals_osif_1.c" update_enabled="false"/>

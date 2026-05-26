@@ -8,15 +8,17 @@
 #include "sdk_project_config.h"
 #include "interrupt_manager.h"
 #include "osif.h"
-#include <stdio.h>
 #include <string.h>
 
 #include "adc_utils.h"
 #include "ftm_utils.h"
 #include "pdb_utils.h"
 #include "clock_utils.h"
+#include "can_utils.h"
 
 /* Define section ---------------------------------------------------------------------------*/
+#define TX_MAILBOX 9
+
 #define VREFH               5.0f
 #define VREFL               0.0f
 #define VOLTAGE_RANGE_mV       ((VREFH-VREFL)*1000)
@@ -37,6 +39,13 @@ static adc_instanceConfig_t adcInstance;
 static ftm_instanceConfig_t ftmServoInstance;
 static pdb_instanceConfig_t pdbInstance;
 
+//static flexcan_data_info_t txInfo = { .data_length = 1U,
+//                                      .msg_id_type = FLEXCAN_MSG_ID_STD,
+//                                      .enable_brs = false,
+//                                      .fd_enable = false,
+//                                      .fd_padding = 0U
+//
+//};
 /* Function prototype section ---------------------------------------------------------------*/
 
 /* @brief:  Initialization function for all used modules.*/
@@ -55,7 +64,7 @@ void v_ADC_IRQHandler(void);
 int main(void) {
     /* PWM duty cycle */
     uint16_t iServoDutyCycle = 0U;
-
+    uint8_t txData[1] = { 0 };
     v_init();
 
     v_selfTest();
@@ -63,7 +72,6 @@ int main(void) {
     /* Infinite loop ------------------------------------------------------------------------*/
     while (1) {
         /*conversion from the ADC resolution to ftm_pwm clock resolution.*/
-        /* TODO: Implement function ui16_scaleToDutyCycle */
         iServoDutyCycle = ui16_scaleToDutyCycle(adcInstance.adcValue,
                                                 MAX_DUTY_CYCLE,
                                                 MIN_DUTY_CYCLE,
@@ -78,12 +86,19 @@ int main(void) {
 
         OSIF_TimeDelay(FTM_UPDATE_DELAY_mS);
 
-        /*
-         * TODO:
-         * - Check if the conversion is ready
-         * - process the raw adc value(adcInstance.adcValue) (see v_scaleAdcValue)
-         * - trigger new conversion(see PDB_DRV_SoftTriggerCmd in init)
-         */
+        if (adcInstance.adcConvDone == true) {
+
+            /*Scale the adc value to voltage range in mV*/
+            v_scaleAdcValue((uint16_t) (VOLTAGE_RANGE_mV),
+                            &adcInstance.adcValue);
+
+
+            /* Trigger PDB timer*/
+            PDB_DRV_SoftTriggerCmd(pdbInstance.instance);
+
+            /* Clear conversion done interrupt flag */
+            adcInstance.adcConvDone = false;
+        }
     }
 }
 
@@ -136,6 +151,9 @@ void v_init(void) {
      */
     v_pdbInit(&pdbInstance);
 
+//    FLEXCAN_DRV_Init(INST_FLEXCAN, &flexcanState0, &flexcanInitConfig0);
+//    FLEXCAN_DRV_ConfigTxMb(INST_FLEXCAN, TX_MAILBOX, &txInfo, STEERING_TX_ID);
+
     /*Initialize adc interrupt. See interrupt_utils for more details.*/
     v_interruptInit(adcInstance.irqNumber, adcInstance.isrHandler);
 
@@ -172,9 +190,13 @@ void v_selfTest(void) {
 
     OSIF_TimeDelay(SELFT_TEST_DELAY_mS);
 
-    /*
-     * TODO: Move servo to the other side
-     */
+    /*Move servo to the other side*/
+    FTM_DRV_UpdatePwmChannel(ftmServoInstance.instance,
+                             ftmServoInstance.hwChannelId,
+                             FTM_PWM_UPDATE_IN_TICKS,
+                             (uint16_t) MIN_DUTY_CYCLE,
+                             0U,
+                             true);
 
     OSIF_TimeDelay(SELFT_TEST_DELAY_mS);
 }

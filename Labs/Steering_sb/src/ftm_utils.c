@@ -46,14 +46,11 @@ uint16_t ui16_scaleToDutyCycle(uint16_t inputValue,
                                uint16_t ui16MaxDutyCycle,
                                uint16_t ui16MinDutyCycle,
                                uint16_t maxInputValue) {
-    uint16_t dutyCycle;
-    /*
+        uint16_t dutyCycle;
 
-     * TODO: Implement the function to scale and invert the input value.
-
-     *       - Don't forget to offset the result
-
-     */
+        dutyCycle = (inputValue * (((float)ui16MaxDutyCycle - (float)ui16MinDutyCycle) / (float)maxInputValue)) + ui16MinDutyCycle;
+        dutyCycle = dutyCycle > ui16MaxDutyCycle ? ui16MaxDutyCycle : dutyCycle;
+        dutyCycle = (ui16MaxDutyCycle + ui16MinDutyCycle) - dutyCycle;
 
     return dutyCycle;
 }

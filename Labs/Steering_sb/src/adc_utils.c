@@ -52,9 +52,6 @@ void v_adcInit(adc_instanceConfig_t *adcInstance) {
  */
 
 void v_scaleAdcValue(uint16_t scaleMax, uint16_t *ui16AdcValue) {
-    /*
-     *
-     *TODO: Process the result to get the value in mV
-     *
-     */
+    /* Process the result to get the value in mV */
+    (*ui16AdcValue) = (((*ui16AdcValue) * scaleMax) / ADC_MAX_VALUE);
 }

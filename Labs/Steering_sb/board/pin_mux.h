@@ -1,10 +1,3 @@
-/*
-* Copyright 2024 - 2025 NXP
-*
-* SPDX-License-Identifier: BSD-3-Clause
-*/
-
-
 #ifndef _PIN_MUX_H_
 #define _PIN_MUX_H_
 
@@ -30,7 +23,7 @@ extern "C" {
 
 /*! @brief Definitions/Declarations for BOARD_InitPins Functional Group */
 /*! @brief User number of configured pins */
-#define NUM_OF_CONFIGURED_PINS0 2
+#define NUM_OF_CONFIGURED_PINS0 4
 /*! @brief User configuration structure */
 extern pin_settings_config_t g_pin_mux_InitConfigArr0[NUM_OF_CONFIGURED_PINS0];
 
