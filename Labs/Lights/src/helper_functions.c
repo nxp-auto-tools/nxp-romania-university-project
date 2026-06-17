@@ -58,7 +58,7 @@ floatToStr (const float *srcValue, char *destStr, uint8_t maxLen)
  * @param nbOfCycles is number of cycles to be waited for
  ***********************************/
 void
-delayCycles (uint32_t nbOfCycles)
+v_delayCycles (uint32_t nbOfCycles)
 {
   volatile uint32_t i = nbOfCycles;
   while (i--)

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2015 - 2016 , Freescale Semiconductor, Inc.
- * Copyright 2016-2020 NXP
+ * Copyright 2016-2025 NXP
  * All rights reserved.
  *
  * NXP Confidential. This software is owned or controlled by NXP and may only be
@@ -19,59 +19,74 @@
 
 /***********************************
  * @brief: Convert a float to null terminated char array
- * @param srcValue:  pointer to the source float value
- * @param destStr:   pointer to the destination string
- * @param maxLen:    maximum lenght of the string
+ * @param[in] srcValue:  pointer to the source float value
+ * @param[out] destStr:   pointer to the destination string
+ * @param[in] maxLen:    maximum lenght of the string
  ***********************************/
-void
-floatToStr (const float *srcValue, char *destStr, uint8_t maxLen)
+void v_floatToStr (const float *srcValue, char *destStr, uint8_t maxLen)
 {
+  /* Step 1: Initialize variables for conversion */
   uint8_t i, lessThanOne = 0;
   float tempVal = (*srcValue);
   uint8_t currentVal;
 
+  /* Step 2: Handle negative values by prepending '-' */
   if (tempVal < 0)
     {
       tempVal *= -1;
       *destStr = '-';
       destStr++;
     }
+
+  /* Step 3: Loop through each digit position */
   for (i = 0; i < maxLen; i++)
     {
+      /* Step 4: Extract integer part of float */
       currentVal = (uint8_t) (tempVal);
+
+      /* Step 5: Convert digit to ASCII and store */
       *destStr = currentVal + 48;
       destStr++;
+
+      /* Step 6: Subtract the integer part to isolate decimal */
       tempVal -= currentVal;
+
+      /* Step 7: Insert decimal point once */
       if ((tempVal < 1) && (lessThanOne == 0))
-	{
-	  *destStr = '.';
-	  destStr++;
-	  lessThanOne = 1;
-	}
+	 	{
+	  		*destStr = '.';
+	  		destStr++;
+	  		lessThanOne = 1;
+		}
+
+	  /* Step 8: Shift decimal for next digit */
       tempVal *= 10;
     }
+
+  /* Step 9: Null-terminate the string */
   *destStr = 0;
 }
 
 /***********************************
  * @brief: Wait for a number of cycles
- * @param nbOfCycles is number of cycles to be waited for
+ * @param[in] nbOfCycles is number of cycles to be waited for
  ***********************************/
-void
-delayCycles (uint32_t nbOfCycles)
+void v_delayCycles (uint32_t nbOfCycles)
 {
+  /* Step 1: Busy-wait loop for delay */
   volatile uint32_t i = nbOfCycles;
-  while (i--)
+  while (i--) /* Step 2: Empty loop body to consume cycles */
     ;
 }
 
-/* Method that enables on-device FPU
- * param: 	None
- * return:	None
- */
-
-void enableFPU(void)
+/***********************************
+ * @brief Enables the on-device FPU
+ * @param None
+ * @return None
+ ***********************************/
+void v_enableFPU(void)
 {
+    /* Step 1: Set CPACR bits to enable FPU access */
 	/* Enable FPU set both CPACR[CP11] and CPACR[CP10] to Full Access - 0b11 */
 	S32_SCB->CPACR |= (S32_SCB_CPACR_CP10_MASK | S32_SCB_CPACR_CP11_MASK);
 }

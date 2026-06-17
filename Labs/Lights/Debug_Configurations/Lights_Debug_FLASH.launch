@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="com.nxp.s32ds.debug.ide.s32debugger.core.s32DebuggerLaunchConfigurationType">
+    <booleanAttribute key="com.nxp.s32ds.debug.ide.s32debugger.core.ccsRemoteSupport" value="false"/>
+    <stringAttribute key="com.nxp.s32ds.debug.ide.s32debugger.core.clientCommands" value=""/>
+    <stringAttribute key="com.nxp.s32ds.debug.ide.s32debugger.core.commandConnectionServerIp" value="127.0.0.1"/>
+    <stringAttribute key="com.nxp.s32ds.debug.ide.s32debugger.core.commandConnectionServerPort" value="41475"/>
+    <stringAttribute key="com.nxp.s32ds.debug.ide.s32debugger.core.delayInMSeconds" value="0"/>
+    <stringAttribute key="com.nxp.s32ds.debug.ide.s32debugger.core.deviceCoreId" value=""/>
+    <booleanAttribute key="com.nxp.s32ds.debug.ide.s32debugger.core.doLaunchServer" value="true"/>
+    <booleanAttribute key="com.nxp.s32ds.debug.ide.s32debugger.core.doResetAndDelay" value="false"/>
+    <booleanAttribute key="com.nxp.s32ds.debug.ide.s32debugger.core.initialCore" value="true"/>
+    <stringAttribute key="com.nxp.s32ds.debug.ide.s32debugger.core.initializationScriptPath" value=""/>
+    <booleanAttribute key="com.nxp.s32ds.debug.ide.s32debugger.core.isSemihostingEnabled" value="true"/>
+    <booleanAttribute key="com.nxp.s32ds.debug.ide.s32debugger.core.isServerLogEnabled" value="false"/>
+    <stringAttribute key="com.nxp.s32ds.debug.ide.s32debugger.core.jtagSpeedKHz" value="16000"/>
+    <stringAttribute key="com.nxp.s32ds.debug.ide.s32debugger.core.multiple.elf" value=""/>
+    <stringAttribute key="com.nxp.s32ds.debug.ide.s32debugger.core.port" value="S32 Debug Probe - USB----"/>
+    <stringAttribute key="com.nxp.s32ds.debug.ide.s32debugger.core.remoteTimeoutInSeconds" value="30"/>
+    <stringAttribute key="com.nxp.s32ds.debug.ide.s32debugger.core.secureDebuggingType" value=""/>
+    <stringAttribute key="com.nxp.s32ds.debug.ide.s32debugger.core.semihostingPort" value="45001"/>
+    <stringAttribute key="com.nxp.s32ds.debug.ide.s32debugger.core.serverPortNumber" value="45000"/>
+    <booleanAttribute key="com.nxp.s32ds.debug.ide.s32debugger.core.useSecureDebugging" value="false"/>
+    <booleanAttribute key="com.nxp.s32ds.ext.cdt.debug.svd.ask_before_clean" value="false"/>
+    <booleanAttribute key="com.nxp.s32ds.ext.cdt.debug.svd.clean_watch_view" value="false"/>
+    <stringAttribute key="com.nxp.s32ds.ext.cdt.debug.svd.merge_strategy" value="NONE"/>
+    <stringAttribute key="com.nxp.s32ds.ext.cdt.debug.svd.svd_path" value=""/>
+    <booleanAttribute key="com.nxp.s32ds.ext.cdt.debug.svd.use_default" value="true"/>
+    <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageFileName" value=""/>
+    <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageOffset" value=""/>
+    <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.loadImage" value="true"/>
+    <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.loadSymbols" value="true"/>
+    <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.pcRegister" value=""/>
+    <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.runCommands" value=""/>
+    <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.setPcRegister" value="false"/>
+    <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.setResume" value="true"/>
+    <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.setStopAt" value="true"/>
+    <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.stopAt" value="main"/>
+    <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.symbolsFileName" value=""/>
+    <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.symbolsOffset" value=""/>
+    <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.useFileForImage" value="false"/>
+    <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.useFileForSymbols" value="false"/>
+    <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.useProjBinaryForImage" value="true"/>
+    <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.useProjBinaryForSymbols" value="true"/>
+    <stringAttribute key="org.eclipse.cdt.dsf.gdb.DEBUG_NAME" value="gdb"/>
+    <booleanAttribute key="org.eclipse.cdt.dsf.gdb.UPDATE_THREADLIST_ON_SUSPEND" value="false"/>
+    <intAttribute key="org.eclipse.cdt.launch.ATTR_BUILD_BEFORE_LAUNCH_ATTR" value="2"/>
+    <stringAttribute key="org.eclipse.cdt.launch.COREFILE_PATH" value=""/>
+    <stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="Debug_FLASH\Lights.elf"/>
+    <stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="Lights"/>
+    <booleanAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_AUTO_ATTR" value="true"/>
+    <stringAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_ID_ATTR" value="com.nxp.s32ds.cle.arm.mbs.arm32.bare.exe.debug.1559595546"/>
+    <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+        <listEntry value="/Lights"/>
+    </listAttribute>
+    <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+        <listEntry value="4"/>
+    </listAttribute>
+</launchConfiguration>

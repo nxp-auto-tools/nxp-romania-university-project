@@ -1,26 +1,30 @@
 /*
- * Copyright 2025 NXP
+ * Copyright (c) 2015 - 2016 , Freescale Semiconductor, Inc.
+ * Copyright 2016-2025 NXP
+ * All rights reserved.
  *
- * SPDX-License-Identifier: BSD-3-Clause
+ * NXP Confidential. This software is owned or controlled by NXP and may only be
+ * used strictly in accordance with the applicable license terms. By expressly
+ * accepting such terms or by downloading, installing, activating and/or otherwise
+ * using the software, you are agreeing that you have read, and that you agree to
+ * comply with and are bound by, such license terms. If you do not agree to be
+ * bound by the applicable license terms, then you may not retain, install,
+ * activate or otherwise use the software. The production use license in
+ * Section 2.3 is expressly granted for this software.
  */
-
-#include "sdk_project_config.h"
-#include "helper_functions.h"
-#include <string.h>
-#include "S32K144.h"
+#include "WS2811_utils.h"
+#include "lights_utils.h"
 
 // pin port configuration
 #define LED0_PORT PTD
-#define LED0_PIN  15 			// RGB_RED
+#define LED0_PIN 15 // RGB_RED
 #define LED1_PORT PTD
-#define LED1_PIN  16 			// RGB_GREEN
+#define LED1_PIN 16 // RGB_GREEN
 #define LED2_PORT PTD
-#define LED2_PIN  0 			// RGB_BLUE
-#define LED_STRIP_PORT PTD  	// WS2811 pin
-#define LED_STRIP_PIN 6
+#define LED2_PIN 0 // RGB_BLUE
 
 #define BUTTON_RIGHT_TURN_PORT PTE
-#define BUTTON_RIGHT_TURN_PIN  15
+#define BUTTON_RIGHT_TURN_PIN 15
 #define BUTTON_LEFT_TURN_PORT PTE
 #define BUTTON_LEFT_TURN_PIN 16
 #define BUTTON_BRAKE_TURN_PORT PTE
@@ -32,231 +36,241 @@
 #define BUTTON_GREEN_PORT PTE
 #define BUTTON_GREEN_PIN 13
 
-#define NUM_LEDS 10  // Number of WS2811 LEDs
+#define DELAY_TIME 2000000
+#define LED_UPDATE_DELAY 1520000
 
-#define T0H 0 // High time for "0" bit (in cycles, adjust based on clock
-#define T0L 2 // Low time for "0" bit
-#define T1H 2 // High time for "1" bit
-#define T1L 0 // Low time for "1" bit
-#define RESET_TIME 100 // Latch time after sending data
+// For blinking, left and right turn shall be 3 times OFF and 3 times ON
+#define TURN_CYCLES 6
 
-// LED index mapping
+#define MAX_COUNTER 2
 
-#define LED_RD_R  0  // Right direction, rear
-#define LED_BRK_R1  1  // Brake, rear LED 1
-#define LED_BRK_R2  2  // Brake, rear LED 2
-#define LED_LD_R  3  // Left direction, rear
-#define LED_RD_F  4  // Right direction, front
-#define LED_HB_F1  5  // High beam, front LED 1
-#define LED_DL_F1  6  // Daylight, front LED 1
-#define LED_DL_F2  7  // Daylight, front LED 2
-#define LED_HB_F2  8  // High beam, front LED 2
-#define LED_LD_F  9  // Left direction, front
+int iBlinkCounter = 0;
 
-// LED color definitions (GRB format)
-const uint8_t COLOR_OFF[3] = { 0, 0, 0 };
-const uint8_t COLOR_LOW_WHITE[3] = { 125, 125, 125 };
-const uint8_t COLOR_WHITE[3] = { 255, 255, 255 };
-const uint8_t COLOR_RED[3] = { 0, 255, 0 };
-const uint8_t COLOR_YELLOW[3] = { 255, 255, 0 };
+bool bIsRightBlinkOn = false;
+bool bIsLeftBlinkOn = false;
+bool bIsHazardBlinkOn = false;
 
 // State variables
-uint8_t daylightOn = 0;
-uint8_t highBeamOn = 0;
-uint8_t rightTurnOn = 0;
-uint8_t leftTurnOn = 0;
-uint8_t ledData[NUM_LEDS][3] = { 0 }; // Array for LED colors, each LED has 3 bytes (G, R, B)
-uint8_t tempLedData[NUM_LEDS][3] = { 0 }; // Array for LED colors, each LED has 3 bytes (G, R, B)
+bool bDaylightStatus = 0;
+bool bHighBeamStatus = 0;
+uint8_t ui8RightTurnStatus = 0;
+uint8_t ui8LeftTurnStatus = 0;
+bool bBrakeStatus = 0;
+bool bHazardStatus = 0;
 
-/**
- * Sends a single bit to the LED strip using the WS2811 timing protocol.
+// Arrays for LED colors, each LED has 3 bytes (G, R, B)
+uint8_t ui8LedData[NUM_LEDS][3] = {0};
+
+/* Function prototypes ------------------------------------------------------------ */
+
+/* @brief: Sequentially tests each LED by turning it on and off. */
+void v_checkLEDs(void);
+
+/* @brief: Resets the LED blink counter to zero. */
+void v_resetCounter();
+
+/* @brief: Checks if a button connected to a specific port and pin is pressed.  */
+bool b_checkButtonPressed(uint32_t ui32Port, uint8_t ui32Pin);
+
+/* @brief: Updates all PCB LEDs based on system status flags.*/
+void v_updatePCBLEDs();
+
+int main(void)
+{
+    status_t error;
+    /* Configure clocks for PORT */
+    error = CLOCK_DRV_Init(&clockMan1_InitConfig0);
+    DEV_ASSERT(error == STATUS_SUCCESS);
+    /* Set pins as GPIO */
+    error = PINS_DRV_Init(NUM_OF_CONFIGURED_PINS0, g_pin_mux_InitConfigArr0);
+    DEV_ASSERT(error == STATUS_SUCCESS);
+
+    v_updateLEDsAllOff(ui8LedData);
+    //  check all LEDs are working
+    v_checkLEDs();
+
+    v_delayCycles(LED_UPDATE_DELAY);
+
+    // Infinite loop to continuously check button states and update LEDs
+    while (1)
+    {
+
+        // Toggle daylight status on button press
+        if (b_checkButtonPressed(BUTTON_DAYLIGHT_PORT->PDIR,
+                                 BUTTON_DAYLIGHT_PIN))
+        {
+            bDaylightStatus ^= 1;
+        }
+
+        // If daylight status is OFF, ensure high beam is also OFF
+        // TODO
+
+        // Toggle high beam status if daylight is on and high beam button is pressed
+        // TODO
+
+        // Check if brake button is pressed and update brake LEDs status accordingly
+        // TODO
+
+        // Check hazard button state and update hazard status accordingly
+        if (/* TODO */)
+        {
+            // Toggle hazard status
+        	// TODO
+
+            bIsHazardBlinkOn = true;
+
+            // Turn OFF right and left turn signal
+            // Prevents turn signals from blinking after hazard mode is turned off
+            // TODO
+
+            v_resetCounter();
+        }
+
+        // Check right turn signal button state and update LEDs status accordingly
+        // Keep in mind:
+        //		- right turn signal is on only if hazard lights are off
+        //		- right turn status is the number of blinking cycles (3 times OFF and 3 times ON)
+        // 		- when right turn signal is on, the right turn signal shall be off
+        // TODO
+
+        // Check left turn signal button state and update LEDs accordingly
+        // Keep in mind:
+        //		- left turn signal is on only if hazard lights are off
+        //		- left turn status is the number of blinking cycles (3 times OFF and 3 times ON)
+        //		- when left turn signal is on, the right turn signal shall be off
+        // TODO
+
+        // Update the state of all car LEDs based on the current status variables
+        v_updatePCBLEDs();
+
+        // Send the updated LED data to the hardware
+        v_sendLEDData(ui8LedData, NUM_LEDS);
+
+        // If counter reaches maximum, reset; otherwise, increment
+        iBlinkCounter == MAX_COUNTER ? v_resetCounter() : iBlinkCounter++;
+
+        v_delayCycles(LED_UPDATE_DELAY);
+    }
+}
+
+/* Functions ---------------------------------------------------------------------- */
+
+/* @brief: Sequentially tests each LED by turning it on and off.
+ * This function iterates through all LEDs, turning each one on with white color,
+ * then off, with a delay between each step.
  *
- * This function sets the data line high and low for durations that correspond
- * to either a '0' bit or a '1' bit, based on the WS2811 protocol specifications.
- *
- * @param bit The bit value to send: 1 to send a '1' bit, 0 to send a '0' bit.
- *
- * Timing for the high and low periods are determined by T1H, T1L (for '1') and
- * T0H, T0L (for '0'). These constants should be defined such that they match the
- * timing requirements for the WS2811 LED driver IC.
+ * @return: no return value
+ * @return type: void
  */
-void sendBit(uint8_t bit) {
-	if (bit) {
-		// Send '1' bit: high for T1H, then low for T1L
-		LED_STRIP_PORT->PSOR = (1 << LED_STRIP_PIN); 	// Set pin high
-		delayCycles(T1H);								// High for T1H
-		LED_STRIP_PORT->PCOR = (1 << LED_STRIP_PIN); 	// Set pin low
-		delayCycles(T1L);								// Low for T1L
-	} else {
-		// Send '0' bit: high for T0H, then low for T0L
-		LED_STRIP_PORT->PSOR = (1 << LED_STRIP_PIN); 	// Set pin high
-		delayCycles(T0H);                           	// High for T0H
-		LED_STRIP_PORT->PCOR = (1 << LED_STRIP_PIN); 	// Set pin low
-		delayCycles(T0L);                           	// Low for T0L
-	}
+void v_checkLEDs(void)
+{
+    for (int i = 0; i < NUM_LEDS; i++)
+    {
+        v_updateLEDColor(ui8LedData, i, ui8ColorWhite);
+        v_sendLEDData(ui8LedData, NUM_LEDS);
+        v_delayCycles(DELAY_TIME);
+    }
+    for (int i = 0; i < NUM_LEDS; i++)
+    {
+        v_updateLEDColor(ui8LedData, i, ui8ColorOff);
+        v_sendLEDData(ui8LedData, NUM_LEDS);
+        v_delayCycles(DELAY_TIME);
+    }
 }
 
-/**
- * Sends a single byte to the LED strip using WS2811 timing.
+/* @brief: Resets the LED blink counter to zero.
  *
- * This function iterates through each bit of the byte, starting from
- * the most significant bit (MSB) and moving to the least significant
- * bit (LSB). Each bit is sent by calling the sendBit() function.
- *
- * @param byte The 8-bit value to send.
+ * @return: no return value
+ * @return type: void
  */
-void sendByte(uint8_t byte) {
-	for (int8_t i = 7; i >= 0; i--) {
-		sendBit((byte >> i) && 0x01);
-	}
+void v_resetCounter()
+{
+    iBlinkCounter = 0;
 }
 
-/**
- * Sends data to a series of WS2811 LEDs.
+/* @brief: Checks if a button connected to a specific port and pin is pressed.
  *
- * This function sends the color data (in GRB order) for each LED by iterating through
- * the array of LED color values. For each LED, it sends the Green, Red, and Blue components
- * in sequence. Once all data is sent, it waits for a reset time to ensure the LED driver latches
- * the new values.
+ * @param ui32Port: digital input register of the port (e.g., PTE->PDIR).
+ * @param type: uint32_t
  *
- * @param data A 2D array containing the GRB color data for each LED.
- * @param numLEDs The number of LEDs in the array.
+ * @param ui32Pin: pin number where the button is connected.
+ * @param type: uint8_t
+ *
+ * @return: true if the button is pressed, false otherwise.
+ * @return type: bool
  */
-void sendLEDData(uint8_t data[][3], size_t numLEDs) {
-	// For each LED, send RGB values in order
-	for (size_t i = 0; i < numLEDs; i++) {
-		sendByte(data[i][0]); // Green
-		sendByte(data[i][1]); // Red
-		sendByte(data[i][2]); // Blue
-	}
-	// After sending data, delay to latch
-	delayCycles(RESET_TIME);
+bool b_checkButtonPressed(uint32_t ui32Port, uint8_t ui32Pin)
+{
+    return !(ui32Port & (1 << ui32Pin));
 }
 
-void delay(volatile int cycles) {
-	/* Delay function - do nothing for a number of cycles */
-	while (cycles--)
-		;
-}
-
-/**
- * Updates the color of a specific LED in the ledData array.
+/* @brief: Updates all PCB LEDs based on system status flags.
  *
- * This function sets the color values (G, R, B) for a given LED
- * in the ledData array. The provided color array must have exactly
- * three elements (green, red, blue) corresponding to the WS2811 format.
+ * @details: This function coordinates the update of all relevant LEDs on the PCB, including:
+ * - Daylight LEDs - `v_updateDaylightLEDs()`
+ * - High beam LEDs - `v_updateHighBeamLEDs()`
+ * - Brake LEDs - `v_updateBrakeLEDs()`
+ * - Hazard and turn signal LEDs based on their respective status flags:
+ *   - If `bHazardStatus` is active, hazard LEDs blink based on `ui8HazardBlinkState`,
+ *    toggled when `iBlinkCounter` reaches `MAX_COUNTER`.
+ *   - If `bRightTurnStatus` is active, right turn LEDs blink while left turn LEDs are turned off.
+ *   - If `bLeftTurnStatus` is active, left turn LEDs blink while right turn LEDs are turned off.
+ *   - If no turn or hazard status is active, both turn LEDs are turned off.
  *
- * @param ledIndex The index of the LED to update in the ledData array.
- * @param color A pointer to an array of three uint8_t values representing the color (G, R, B).
+ * The function also handles blink state toggling and counter resets for timed LED blinking.
+ *
+ * @return: no return value
+ * @return type: void
  */
-void updateLEDColor(uint8_t (*ledArray)[3], uint8_t ledIndex, const uint8_t color[3]) {
-	ledArray[ledIndex][0] = color[0]; // G
-	ledArray[ledIndex][1] = color[1]; // R
-	ledArray[ledIndex][2] = color[2]; // B
-}
+void v_updatePCBLEDs()
+{
+    // Update LED colors based on daylight status
+    v_updateDaylightLEDs(bDaylightStatus, ui8LedData);
 
-/**
- * Sets all LEDs to full brightness (white color).
- *
- * This function updates the ledData array so that each LED is assigned
- * the maximum intensity for all three color channels (G, R, B), effectively
- * turning them all on as white. After updating the array, it calls sendLEDData
- * to transmit the new values to the LEDs.
- */
-void updateLEDsAllOn(void) {
-	// Set all LEDs to white
-	for (int i = 0; i < NUM_LEDS; i++) {
-		updateLEDColor(ledData, i, COLOR_WHITE);
-	}
-	sendLEDData(ledData, NUM_LEDS);
-}
+    // Update high beam LEDs based on high beam status
+    v_updateHighBeamLEDs(bHighBeamStatus, ui8LedData);
 
-/**
- * Turns off all LEDs by setting their colors to zero.
- *
- * This function sets each LED in the ledData array to a color value of (0, 0, 0),
- * effectively turning them all off. It then sends the updated data to the LEDs.
- */
-void updateLEDsAllOff(void) {
-	// Turn off all LEDs
-	for (int i = 0; i < NUM_LEDS; i++) {
-		updateLEDColor(ledData, i, COLOR_OFF);
-	}
-	sendLEDData(ledData, NUM_LEDS);
-}
+    // Update Brake LEDs based on brake status
+    v_updateBrakeLEDs(bBrakeStatus, ui8LedData);
 
-void checkLEDs(void) {
-	for (int i = 0; i < NUM_LEDS; i++) {
-		updateLEDColor(ledData,i, COLOR_WHITE);
-		sendLEDData(ledData, NUM_LEDS);
-		delay(2000000);
-	}
-
-	for (int i = 0; i < NUM_LEDS; i++) {
-		updateLEDColor(ledData,i, COLOR_OFF);
-		sendLEDData(ledData, NUM_LEDS);
-		delay(2000000);
-	}
-
-}
-
-int main(void) {
-	status_t error;
-	/* Configure clocks for PORT */
-	error = CLOCK_DRV_Init(&clockMan1_InitConfig0);
-	DEV_ASSERT(error == STATUS_SUCCESS);
-	/* Set pins as GPIO */
-	error = PINS_DRV_Init(NUM_OF_CONFIGURED_PINS0, g_pin_mux_InitConfigArr0);
-	DEV_ASSERT(error == STATUS_SUCCESS);
-
-	updateLEDsAllOff();
-	//  check all LEDs are working
-	checkLEDs();
-
-	delay(1520000);
-
-	// Infinite loop to continuously check button states and update LEDs
-	for (;;) {
-
-		// Toggle daylight mode on button press
-		if (!(BUTTON_DAYLIGHT_PORT->PDIR & (1 << BUTTON_DAYLIGHT_PIN))) {
-			daylightOn ^= 1;
-		}
-
-		// If daylight is off, high beam should also be off
-		// TODO
-
-		// Toggle high beam mode if daylight is on and button is pressed
-		// TODO
-
-		// Update LED colors based on daylight status
-		// TODO
-	
-
-		// Update high beam LEDs based on high beam status
-		// TODO
-
-
-		// Check brake button state and update brake LEDs accordingly
-		// TODO
-
-
-		// Check right turn signal button state and update LEDs accordingly
-		// TODO
-
-		// Check left turn signal button state and update LEDs accordingly
-		// TODO
-
-		// Flash left and/or right turn signal LEDs if any turn signal is active
-		// TODO
-
-		// If no turn signal is active, send the current LED data as is
-		// TODO
-
-		// default action
-		sendLEDData(ledData, NUM_LEDS);
-
-		delay(1520000);
-	}
-
+    // Update hazard LEDs based on hazard state
+    if (bHazardStatus)
+    {
+        v_updateHazardLEDs(bIsHazardBlinkOn,ui8LedData);
+        if (iBlinkCounter == MAX_COUNTER)
+        {
+            // Change the state of hazard LEDs when MAX_COUNTER is reached
+            bIsHazardBlinkOn ^= 1;
+            v_resetCounter();
+        }
+    }
+    else if (ui8RightTurnStatus)
+    {
+        v_updateLeftTurnLEDs(false, ui8LedData);
+        v_updateRightTurnLEDs(bIsRightBlinkOn, ui8LedData);
+        if (iBlinkCounter == MAX_COUNTER)
+        {
+            // Change the state of right blink LEDs when MAX_COUNTER is reached
+            bIsRightBlinkOn ^= 1;
+            v_resetCounter();
+            ui8RightTurnStatus--;
+        }
+    }
+    else if (ui8LeftTurnStatus)
+    {
+        v_updateRightTurnLEDs(false,ui8LedData);
+        v_updateLeftTurnLEDs(bIsLeftBlinkOn,ui8LedData);
+        if (iBlinkCounter == MAX_COUNTER)
+        {
+            // Change the state of left blink LEDs when MAX_COUNTER is reached
+            bIsLeftBlinkOn ^= 1;
+            v_resetCounter();
+            ui8LeftTurnStatus--;
+        }
+    }
+    else
+    {
+        v_updateRightTurnLEDs(false,ui8LedData);
+        v_updateLeftTurnLEDs(false,ui8LedData);
+    }
 }
