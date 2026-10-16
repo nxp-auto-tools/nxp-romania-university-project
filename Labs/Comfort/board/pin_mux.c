@@ -1,3 +1,8 @@
+/*
+* Copyright 2026 NXP
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 /* clang-format off */
 /*
  * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************

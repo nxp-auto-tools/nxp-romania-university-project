@@ -1,3 +1,8 @@
+/*
+* Copyright 2026 NXP
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 #ifndef CLOCK_CONFIG_H
 #define CLOCK_CONFIG_H
 

@@ -1,4 +1,8 @@
-
+/*
+* Copyright 2026 NXP
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 #ifndef LIGHTS_UTILS_H_
 #define LIGHTS_UTILS_H_
 

@@ -1,8 +1,8 @@
 /*
- * Copyright 2025 NXP
- * All rights reserved.
- *
- */
+* Copyright 2026 NXP
+*
+* SPDX-License-Identifier: BSD-3-Clause
+*/
 
 #include "sdk_project_config.h"
 #include <stdint.h>
