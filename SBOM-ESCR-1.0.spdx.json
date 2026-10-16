@@ -1,0 +1,35 @@
+{
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "spdxVersion": "SPDX-2.3",
+  "creationInfo": {
+    "created": "2026-07-07T07:42:10Z",
+    "creators": [
+      "Organization: NXP"
+    ],
+    "licenseListVersion": "3.28"
+  },
+  "name": "ESCR-1.0",
+  "dataLicense": "CC0-1.0",
+  "documentNamespace": "https://nxp.com/spdx/bdad636d-9695-4faa-961d-441e482e143a",
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-package-bdad636d-9695-4faa-961d-441e482e143a",
+      "name": "ESCR",
+      "versionInfo": "1.0",
+      "licenseConcluded": "(BSD-3-Clause)",
+      "licenseDeclared": "(BSD-3-Clause)",
+      "downloadLocation": "https://github.com/nxp-auto-tools/nxp-romania-university-project",
+      "originator": "Organization: ESCR",
+      "supplier": "NOASSERTION",
+      "externalRefs": [],
+      "filesAnalyzed": false
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-package-bdad636d-9695-4faa-961d-441e482e143a"
+    }
+  ]
+}
